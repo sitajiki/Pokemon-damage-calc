@@ -81,7 +81,7 @@ select option{background:var(--input)}
 <div class="sh">能力値</div>
 <div class="stat-hdr"><span></span><span></span><span>種族値</span><span>努力値</span><span>実数値</span></div>
 <div id="atk-stats"></div>
-<div class="spt" id="atk-spt">努力値合計: 0/66</div>
+<div class="spt" id="atk-spt">努力値合計: 0/32</div>
 <div class="sh">ランク補正</div>
 <div class="row2">
 <div class="fg"><label>攻撃</label><select id="atk-rk-a" class="rs"></select></div>
@@ -128,7 +128,7 @@ select option{background:var(--input)}
 <div class="sh">能力値</div>
 <div class="stat-hdr"><span></span><span></span><span>種族値</span><span>努力値</span><span>実数値</span></div>
 <div id="def-stats"></div>
-<div class="spt" id="def-spt">努力値合計: 0/66</div>
+<div class="spt" id="def-spt">努力値合計: 0/32</div>
 <div class="sh">ランク補正</div>
 <div class="row2">
 <div class="fg"><label>防御</label><select id="def-rk-b" class="rs"></select></div>
@@ -563,8 +563,8 @@ function init(){
   // Defaults
   document.getElementById('atk-nature').value='いじっぱり';
   document.getElementById('def-nature').value='ひかえめ';
-  SP.atk={hp:0,atk:32,def:0,spa:0,spd:0,spe:34};
-  SP.def={hp:4,atk:0,def:0,spa:32,spd:0,spe:30};
+  SP.atk={hp:0,atk:32,def:0,spa:0,spd:0,spe:0};
+  SP.def={hp:0,atk:0,def:0,spa:32,spd:0,spe:0};
  
   acAtkPoke.setValue('ガブリアス');
   acDefPoke.setValue('アシレーヌ');
@@ -605,7 +605,7 @@ function renderS(side){
   c.innerHTML=h;
   const tot=Object.values(SP[side]).reduce((a,b)=>a+b,0);
   const el=document.getElementById(side+'-spt');
-  el.textContent=`努力値合計: ${tot}/66`;el.style.color=tot>66?'#f44':'var(--muted)';
+  el.textContent=`努力値合計: ${tot}/32`;el.style.color=tot>32?'#f44':'var(--muted)';
 }
  
 function onSP(side,k,v){SP[side][k]=Math.max(0,Math.min(32,parseInt(v)||0));renderS(side);calc()}
