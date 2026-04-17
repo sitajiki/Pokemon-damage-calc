@@ -614,12 +614,14 @@ function rm(r){return r>=0?(2+r)/2:2/(2-r)}
 function t2c(t){return{ノーマル:"#A8A77A",ほのお:"#EE8130",みず:"#6390F0",でんき:"#F7D02C",くさ:"#7AC74C",こおり:"#96D9D6",かくとう:"#C22E28",どく:"#A33EA1",じめん:"#E2BF65",ひこう:"#A98FF3",エスパー:"#F95587",むし:"#A6B91A",いわ:"#B6A136",ゴースト:"#735797",ドラゴン:"#6F35FC",あく:"#705746",はがね:"#B7B7CE",フェアリー:"#D685AD"}[t]||"#888"}
  
 // ===== AUTOCOMPLETE =====
+function toKata(s){return s.replace(/[\u3041-\u3096]/g,c=>String.fromCharCode(c.charCodeAt(0)+0x60))}
+function toHira(s){return s.replace(/[\u30A1-\u30F6]/g,c=>String.fromCharCode(c.charCodeAt(0)-0x60))}
 function setupAC(inputId,listId,data,onSelect){
   const inp=document.getElementById(inputId),list=document.getElementById(listId);
   let sel=-1,items=[];
   function render(q){
-    const lq=q.toLowerCase();
-    items=data.filter(d=>d.name.toLowerCase().includes(lq)||d.name.includes(q)).slice(0,20);
+    const lq=q.toLowerCase(),qk=toKata(q),qh=toHira(q);
+    items=data.filter(d=>{const n=d.name,nl=n.toLowerCase();return nl.includes(lq)||n.includes(q)||n.includes(qk)||n.includes(qh)||toHira(n).includes(qh)}).slice(0,20);
     if(!q)items=data.slice(0,20);
     list.innerHTML=items.map((d,i)=>`<div class="ac-item${i===sel?' sel':''}" data-i="${i}">${d.name}${d.sub?'<span class="sub"> '+d.sub+'</span>':''}</div>`).join('');
     list.classList.toggle('show',items.length>0&&document.activeElement===inp);
