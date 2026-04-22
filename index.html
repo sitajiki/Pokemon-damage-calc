@@ -96,6 +96,7 @@ select option{background:var(--input)}
 <div class="cb"><input type="checkbox" id="atk-burn"><label for="atk-burn">やけど</label></div>
 <div class="cb"><input type="checkbox" id="atk-charge"><label for="atk-charge">じゅうでん (でんき1.5倍)</label></div>
 <div class="cb"><input type="checkbox" id="atk-hh"><label for="atk-hh">てだすけ (1.5倍)</label></div>
+<div class="cb"><input type="checkbox" id="atk-pinch"><label for="atk-pinch">ピンチ (HP1/3以下)</label></div>
 </div>
 <!-- MID -->
 <div class="mid">
@@ -138,6 +139,7 @@ select option{background:var(--input)}
 <div class="cb"><input type="checkbox" id="def-ls"><label for="def-ls">ひかりのかべ</label></div>
 <div class="cb"><input type="checkbox" id="def-av"><label for="def-av">オーロラベール</label></div>
 <div class="cb"><input type="checkbox" id="def-fg"><label for="def-fg">フレンドガード</label></div>
+<div class="cb"><input type="checkbox" id="def-sr"><label for="def-sr">ステルスロック</label></div>
 </div>
 </div>
 </div>
@@ -769,15 +771,21 @@ function calc(){
  
   const ait=document.getElementById('atk-item').value,dit=document.getElementById('def-item').value;
   const aab=document.getElementById('atk-ability').value,dab=document.getElementById('def-ability').value;
- 
+  const w=document.getElementById('weather').value;
+  const molded=aab==='かたやぶり'||aab==='すじがねいり';
+  const pinch=document.getElementById('atk-pinch').checked;
+
   if(ait==='cb'&&phys)A=Math.floor(A*1.5);
   if(ait==='cs'&&!phys)A=Math.floor(A*1.5);
   if(dit==='av'&&!phys&&!psShock)D=Math.floor(D*1.5);
   if(dit==='ev')D=Math.floor(D*1.5);
   if(aab==='ちからもち'&&phys)A*=2;
   if(aab==='ヨガパワー'&&phys)A*=2;
-  if(dab==='ファーコート'&&phys)D*=2;
- 
+  if(aab==='はりきり'&&phys)A=Math.floor(A*1.5);
+  if(aab==='サンパワー'&&!phys&&w==='sun')A=Math.floor(A*1.5);
+  if(!molded&&dab==='ファーコート'&&phys)D*=2;
+  if(!molded&&dab==='ふしぎなうろこ'&&phys)D=Math.floor(D*1.5);
+
   let pow=mv.p;
   if(mn==='はたきおとす'&&dit!=='none')pow=Math.floor(pow*1.5);
   if(aab==='テクニシャン'&&pow<=60)pow=Math.floor(pow*1.5);
@@ -785,12 +793,28 @@ function calc(){
   if(ait.startsWith('t_')&&ait.slice(2)===mv.t)pow=Math.floor(pow*1.2);
   if(document.getElementById('atk-charge').checked&&mv.t==='でんき')pow=Math.floor(pow*1.5);
   if(aab==='かたいツメ'&&phys)pow=Math.floor(pow*1.3);
- 
+  if(pinch){
+    if(aab==='もうか'&&mv.t==='ほのお')pow=Math.floor(pow*1.5);
+    if(aab==='げきりゅう'&&mv.t==='みず')pow=Math.floor(pow*1.5);
+    if(aab==='しんりょく'&&mv.t==='くさ')pow=Math.floor(pow*1.5);
+    if(aab==='むしのしらせ'&&mv.t==='むし')pow=Math.floor(pow*1.5);
+  }
+  if(w==='sand'&&aab==='すなのちから'&&(mv.t==='いわ'||mv.t==='じめん'||mv.t==='はがね'))pow=Math.floor(pow*1.3);
+  const _PULSE=['はどうだん','りゅうのはどう','あくのはどう','みずのはどう','はめつのひかり'];
+  if(aab==='メガランチャー'&&_PULSE.includes(mn))pow=Math.floor(pow*1.5);
+  const _BITE=['かみくだく','かみつく','ほのおのキバ','こおりのキバ','かみなりのキバ','どくどくのキバ','サイコファング'];
+  if(aab==='がんじょうあご'&&_BITE.includes(mn))pow=Math.floor(pow*1.5);
+  const _SLICE=['ひけん・ちえなみ','サイコカッター','シェルブレード','シザークロス','アクアカッター','エアカッター','リーフブレード','つじぎり','つばめがえし','せいなるつるぎ','ストーンエッジ','ソーラーブレード','がんせきアックス','はなふぶき','ドラゴンクロー','かわらわり','ブレイククロー','フェイタルクロー','シャドークロー','スマートホーン','むねんのつるぎ','かげぬい','3ぼんのや','ひょうざんおろし','アーマーキャノン','アイアンヘッド','アイアンテール'];
+  if(aab==='きれあじ'&&_SLICE.includes(mn))pow=Math.floor(pow*1.5);
+  const _RECOIL=['フレアドライブ','ブレイブバード','ウッドハンマー','すてみタックル','ウェーブタックル','ボルテッカー','ワイルドボルト','ドラゴンダイブ','もろはのずつき','とびひざげり','とびかかる'];
+  if(aab==='すてみ'&&_RECOIL.includes(mn))pow=Math.floor(pow*1.2);
+  const _PUNCH=['かみなりパンチ','ほのおのパンチ','れいとうパンチ','ばくれつパンチ','マッハパンチ','バレットパンチ','ドレインパンチ','アームハンマー','シャドーパンチ','きあいパンチ','アイスハンマー','コメットパンチ'];
+  if(aab==='てつのこぶし'&&_PUNCH.includes(mn))pow=Math.floor(pow*1.2);
+
   let bd=Math.floor(Math.floor(Math.floor(22)*pow*A/D)/50+2);
  
   if(document.getElementById('spread').checked&&document.getElementById('fmt').value==='double')bd=Math.floor(bd*.75);
- 
-  const w=document.getElementById('weather').value;
+
   if(w==='sun'){if(mv.t==='ほのお')bd=Math.floor(bd*1.5);if(mv.t==='みず')bd=Math.floor(bd*.5)}
   if(w==='rain'){if(mv.t==='みず')bd=Math.floor(bd*1.5);if(mv.t==='ほのお')bd=Math.floor(bd*.5)}
   if(w==='sand'&&!phys&&dp.t.includes('いわ'))bd=Math.floor(bd*2/3);
@@ -806,18 +830,21 @@ function calc(){
  
   if(document.getElementById('atk-hh').checked)bd=Math.floor(bd*1.5);
  
+  const immune=!molded&&((dab==='ふゆう'&&mv.t==='じめん')||(dab==='ちくでん'&&mv.t==='でんき')||(dab==='ちょすい'&&mv.t==='みず')||(dab==='ひらいしん'&&mv.t==='でんき')||(dab==='そうしょく'&&mv.t==='くさ')||(dab==='もらいび'&&mv.t==='ほのお')||(dab==='どしょく'&&mv.t==='じめん'));
   const dmgs=[];
   for(let r=85;r<=100;r++){
     let d=Math.floor(bd*r/100);
     let stab=1;if(ap.t.includes(mv.t))stab=1.5;
     if(aab==='てきおうりょく'&&stab>1)stab=2;
-    if((aab==='スカイスキン'||aab==='フェアリースキン')&&stab===1)stab=1.2;
+    if((aab==='スカイスキン'||aab==='フェアリースキン'||aab==='フリーズスキン')&&stab===1)stab=1.2;
     d=Math.floor(d*stab);
-    const ef=eff(mv.t,dp.t);
+    let ef=eff(mv.t,dp.t);
+    if(immune)ef=0;
     d=Math.floor(d*ef);
     if(ait==='eb'&&ef>1)d=Math.floor(d*1.2);
     if(document.getElementById('atk-burn').checked&&phys&&aab!=='こんじょう')d=Math.floor(d*.5);
     if(aab==='こんじょう'&&document.getElementById('atk-burn').checked&&phys)d=Math.floor(d*1.5);
+    if(aab==='すいほう'&&mv.t==='みず')d=Math.floor(d*2);
     if(!crit){
       const dbl=document.getElementById('fmt').value==='double';
       const sm=dbl?2/3:.5;
@@ -825,11 +852,15 @@ function calc(){
       if(!phys&&!psShock&&(document.getElementById('def-ls').checked||document.getElementById('def-av').checked))d=Math.floor(d*sm);
     }
     if(document.getElementById('def-fg').checked)d=Math.floor(d*.75);
-    if(dab==='あついしぼう'&&(mv.t==='ほのお'||mv.t==='こおり'))d=Math.floor(d*.5);
-    if(dab==='マルチスケイル')d=Math.floor(d*.5);
-    if((dab==='ハードロック'||dab==='フィルター')&&ef>1)d=Math.floor(d*.75);
-    if(dab==='もふもふ'&&phys&&mv.t!=='ほのお')d=Math.floor(d*.5);
-    if(dab==='こおりのりんぷん'&&!phys)d=Math.floor(d*.5);
+    if(!molded){
+      if(dab==='あついしぼう'&&(mv.t==='ほのお'||mv.t==='こおり'))d=Math.floor(d*.5);
+      if(dab==='たいねつ'&&mv.t==='ほのお')d=Math.floor(d*.5);
+      if(dab==='すいほう'&&mv.t==='ほのお')d=Math.floor(d*.5);
+      if(dab==='マルチスケイル')d=Math.floor(d*.5);
+      if((dab==='ハードロック'||dab==='フィルター')&&ef>1)d=Math.floor(d*.75);
+      if(dab==='もふもふ'&&phys&&mv.t!=='ほのお')d=Math.floor(d*.5);
+      if(dab==='こおりのりんぷん'&&!phys)d=Math.floor(d*.5);
+    }
     if(d<1&&ef>0)d=1;
     dmgs.push(d);
   }
@@ -837,26 +868,31 @@ function calc(){
   const hits=mv.h||1;
   const mi=Math.min(...dmgs)*hits,ma=Math.max(...dmgs)*hits;
   const hp=ds.hp;
+  const srOn=document.getElementById('def-sr').checked;
+  const srEf=eff('いわ',dp.t);
+  const srDmg=srOn?Math.floor(hp*srEf/8):0;
+  const ehp=hp-srDmg;
   const mip=(mi/hp*100).toFixed(1),map=(ma/hp*100).toFixed(1);
- 
-  const ef=eff(mv.t,dp.t);
+
+  let ef=eff(mv.t,dp.t);if(immune)ef=0;
   let et='';
   if(ef===0)et='<span style="color:#888">効果なし</span>';
   else if(ef<1)et=`<span style="color:#48f">いまひとつ (×${ef})</span>`;
   else if(ef===1)et='<span style="color:#ccc">等倍</span>';
   else et=`<span style="color:#f44">効果抜群 (×${ef})</span>`;
- 
+  if(srOn)et+=` <span style="color:#b6a136;font-size:.78em">SR -${srDmg} (${(srDmg/hp*100).toFixed(1)}%)</span>`;
+
   let ko='';
   if(ef===0)ko='効果がない';
-  else if(mi>=hp)ko='確定1発';
-  else if(ma>=hp){const c=dmgs.filter(d=>d*hits>=hp).length;ko=`乱数1発 (${(c/16*100).toFixed(1)}%)`}
-  else if(mi*2>=hp)ko='確定2発';
-  else if(ma*2>=hp)ko='乱数2発';
-  else if(mi*3>=hp)ko='確定3発';
-  else if(ma*3>=hp)ko='乱数3発';
-  else ko=Math.ceil(hp/ma)+'発以上';
- 
-  show(`${mi} ~ ${ma}`,`HP ${hp} に対して`,`${mip}% ~ ${map}%`,et,ko);
+  else if(mi>=ehp)ko=srOn&&mi<hp?'ステロ込み確定1発':'確定1発';
+  else if(ma>=ehp){const c=dmgs.filter(d=>d*hits>=ehp).length;ko=`${srOn?'ステロ込み':''}乱数1発 (${(c/16*100).toFixed(1)}%)`}
+  else if(mi*2>=ehp)ko=`${srOn?'ステロ込み':''}確定2発`;
+  else if(ma*2>=ehp)ko=`${srOn?'ステロ込み':''}乱数2発`;
+  else if(mi*3>=ehp)ko=`${srOn?'ステロ込み':''}確定3発`;
+  else if(ma*3>=ehp)ko=`${srOn?'ステロ込み':''}乱数3発`;
+  else ko=Math.ceil(ehp/ma)+'発以上';
+
+  show(`${mi} ~ ${ma}`,`HP ${hp}${srOn?' (実質'+ehp+')':''} に対して`,`${mip}% ~ ${map}%`,et,ko);
 }
  
 function show(d,r,p,e,k){
