@@ -606,7 +606,7 @@ const SK=["HP","攻撃","防御","特攻","特防","素早"];
 const SKK=["hp","atk","def","spa","spd","spe"];
  
 // ===== ITEMS =====
-const IT=[{n:"なし",id:"none"},{n:"こだわりハチマキ",id:"cb"},{n:"こだわりメガネ",id:"cs"},{n:"こだわりスカーフ",id:"csc"},{n:"いのちのたま",id:"lo"},{n:"たつじんのおび",id:"eb"},{n:"きあいのタスキ",id:"fs"},{n:"とつげきチョッキ",id:"av"},{n:"しんかのきせき",id:"ev"},{n:"たべのこし",id:"lf"},{n:"ゴツゴツメット",id:"rh"},{n:"オボンのみ",id:"sb"},{n:"ラムのみ",id:"lb"},{n:"もくたん",id:"t_ほのお"},{n:"しんぴのしずく",id:"t_みず"},{n:"じしゃく",id:"t_でんき"},{n:"きせきのタネ",id:"t_くさ"},{n:"とけないこおり",id:"t_こおり"},{n:"くろおび",id:"t_かくとう"},{n:"どくバリ",id:"t_どく"},{n:"やわらかいすな",id:"t_じめん"},{n:"するどいくちばし",id:"t_ひこう"},{n:"まがったスプーン",id:"t_エスパー"},{n:"ぎんのこな",id:"t_むし"},{n:"かたいいし",id:"t_いわ"},{n:"のろいのおふだ",id:"t_ゴースト"},{n:"りゅうのキバ",id:"t_ドラゴン"},{n:"くろいメガネ",id:"t_あく"},{n:"メタルコート",id:"t_はがね"},{n:"シルクのスカーフ",id:"t_ノーマル"}];
+const IT=[{n:"なし",id:"none"},{n:"こだわりハチマキ",id:"cb"},{n:"こだわりメガネ",id:"cs"},{n:"こだわりスカーフ",id:"csc"},{n:"いのちのたま",id:"lo"},{n:"たつじんのおび",id:"eb"},{n:"きあいのタスキ",id:"fs"},{n:"とつげきチョッキ",id:"av"},{n:"しんかのきせき",id:"ev"},{n:"たべのこし",id:"lf"},{n:"ゴツゴツメット",id:"rh"},{n:"オボンのみ",id:"sb"},{n:"ラムのみ",id:"lb"},{n:"技威力1.2倍",id:"tb"}];
  
 // ===== HELPERS =====
 const SP={atk:{},def:{}};
@@ -790,7 +790,7 @@ function calc(){
   if(mn==='はたきおとす'&&dit!=='none')pow=Math.floor(pow*1.5);
   if(aab==='テクニシャン'&&pow<=60)pow=Math.floor(pow*1.5);
   if(ait==='lo')pow=Math.floor(pow*5324/4096);
-  if(ait.startsWith('t_')&&ait.slice(2)===mv.t)pow=Math.floor(pow*1.2);
+  if(ait==='tb')pow=Math.floor(pow*1.2);
   if(document.getElementById('atk-charge').checked&&mv.t==='でんき')pow=Math.floor(pow*1.5);
   if(aab==='かたいツメ'&&phys)pow=Math.floor(pow*1.3);
   if(pinch){
