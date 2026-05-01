@@ -60,7 +60,20 @@ select option{background:var(--input)}
 .ac-item:hover,.ac-item.sel{background:var(--accent);color:#fff}
 .ac-item .sub{font-size:.72em;color:var(--muted)}
 .ac-item:hover .sub{color:#ccc}
-@media(max-width:920px){.grid{grid-template-columns:1fr;gap:8px}.mid{padding-top:0}}
+.party{background:var(--card);border-radius:12px;padding:10px;border:1px solid var(--border);margin-top:8px}
+.party-title{font-size:.9em;font-weight:700;color:var(--hl);margin-bottom:6px}
+.party-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:5px}
+.party-slot{background:var(--input);border:1px solid var(--border);border-radius:8px;padding:6px;text-align:center;cursor:pointer;min-height:60px;font-size:.72em;transition:border-color .2s;position:relative}
+.party-slot:hover{border-color:var(--hl)}
+.party-slot .ps-name{font-weight:700;font-size:.9em;margin-bottom:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.party-slot .ps-info{color:var(--muted);font-size:.85em;line-height:1.3}
+.party-slot.empty{color:var(--muted);display:flex;align-items:center;justify-content:center}
+.party-slot .ps-del{position:absolute;top:2px;right:4px;color:var(--muted);font-size:.9em;cursor:pointer;line-height:1}
+.party-slot .ps-del:hover{color:var(--hl)}
+.party-btns{display:flex;gap:5px;margin-top:6px}
+.party-btns button{flex:1;padding:5px;border:1px solid var(--border);border-radius:6px;background:var(--accent);color:var(--text);font-size:.75em;cursor:pointer}
+.party-btns button:hover{background:var(--hl)}
+@media(max-width:920px){.grid{grid-template-columns:1fr;gap:8px}.mid{padding-top:0}.party-grid{grid-template-columns:repeat(3,1fr)}}
 </style>
 </head>
 <body>
@@ -140,6 +153,16 @@ select option{background:var(--input)}
 <div class="cb"><input type="checkbox" id="def-av"><label for="def-av">オーロラベール</label></div>
 <div class="cb"><input type="checkbox" id="def-fg"><label for="def-fg">フレンドガード</label></div>
 <div class="cb"><input type="checkbox" id="def-sr"><label for="def-sr">ステルスロック</label></div>
+</div>
+</div>
+</div>
+<div class="party" id="party-panel">
+<div class="party-title">&#128101; マイパーティ</div>
+<div class="party-grid" id="party-grid"></div>
+<div class="party-btns">
+<button onclick="partySave()">&#9876; 攻撃側を保存</button>
+<button onclick="partyExport()">&#128230; エクスポート</button>
+<button onclick="partyImport()">&#128229; インポート</button>
 </div>
 </div>
 </div>
@@ -921,9 +944,59 @@ function swap(){
   document.getElementById('atk-item').value=di;
   document.getElementById('def-item').value=ai;
   acAtkPoke.setValue(d);acDefPoke.setValue(a);
+  setTimeout(()=>{
+    const aa=document.getElementById('atk-ability'),da=document.getElementById('def-ability');
+    const aOpts=[...aa.options].map(o=>o.value),dOpts=[...da.options].map(o=>o.value);
+    const av=da.value,dv=aa.value;
+    if(aOpts.includes(av))aa.value=av;
+    if(dOpts.includes(dv))da.value=dv;
+    calc();
+  },60);
 }
  
-window.addEventListener('DOMContentLoaded',init);
+// ===== PARTY =====
+function getParty(){try{return JSON.parse(localStorage.getItem('pokeParty'))||[]}catch(e){return[]}}
+function setParty(p){localStorage.setItem('pokeParty',JSON.stringify(p))}
+function partySave(){
+  const party=getParty();
+  if(party.length>=6){alert('パーティは6体までです。削除してから保存してください。');return}
+  const name=document.getElementById('atk-pokemon-input').value;
+  if(!name){alert('ポケモンを選択してください');return}
+  const slot={name,nature:document.getElementById('atk-nature').value,evs:{...SP.atk},ability:document.getElementById('atk-ability').value,item:document.getElementById('atk-item').value,move:document.getElementById('atk-move-input').value};
+  party.push(slot);setParty(party);renderParty();
+}
+function partyDel(i){const p=getParty();p.splice(i,1);setParty(p);renderParty()}
+function partyLoad(i,side){
+  const p=getParty()[i];if(!p)return;
+  SP[side]={...p.evs};
+  document.getElementById(side+'-nature').value=p.nature;
+  document.getElementById(side+'-item').value=p.item;
+  if(side==='atk'){acAtkPoke.setValue(p.name);setTimeout(()=>{document.getElementById('atk-ability').value=p.ability;acMove.setValue(p.move)},50)}
+  else{acDefPoke.setValue(p.name);setTimeout(()=>{document.getElementById('def-ability').value=p.ability},50)}
+}
+function renderParty(){
+  const party=getParty(),g=document.getElementById('party-grid');
+  let h='';
+  for(let i=0;i<6;i++){
+    if(i<party.length){
+      const s=party[i],evs=Object.entries(s.evs).filter(([,v])=>v>0).map(([k,v])=>{const n={hp:'H',atk:'A',def:'B',spa:'C',spd:'D',spe:'S'}[k]||k;return n+v}).join(' ');
+      h+=`<div class="party-slot" onclick="partyLoad(${i},'atk')" title="クリック→攻撃側\nShift+クリック→防御側" onmousedown="if(event.shiftKey){event.preventDefault();partyLoad(${i},'def')}"><span class="ps-del" onclick="event.stopPropagation();partyDel(${i})">&times;</span><div class="ps-name">${s.name}</div><div class="ps-info">${s.nature}<br>${evs||'無振り'}<br>${s.move||'-'}</div></div>`;
+    }else{
+      h+=`<div class="party-slot empty">空</div>`;
+    }
+  }
+  g.innerHTML=h;
+}
+function partyExport(){
+  const p=getParty();if(!p.length){alert('パーティが空です');return}
+  const s=btoa(unescape(encodeURIComponent(JSON.stringify(p))));
+  navigator.clipboard.writeText(s).then(()=>alert('クリップボードにコピーしました')).catch(()=>{prompt('以下をコピーしてください:',s)});
+}
+function partyImport(){
+  const s=prompt('エクスポートした文字列を貼り付けてください:');if(!s)return;
+  try{const p=JSON.parse(decodeURIComponent(escape(atob(s))));if(Array.isArray(p)&&p.length<=6){setParty(p);renderParty();alert('インポートしました')}else{alert('無効なデータです')}}catch(e){alert('読み込みに失敗しました')}
+}
+window.addEventListener('DOMContentLoaded',()=>{init();renderParty()});
 </script>
 </body>
 </html>
