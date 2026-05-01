@@ -944,6 +944,14 @@ function swap(){
   document.getElementById('atk-item').value=di;
   document.getElementById('def-item').value=ai;
   acAtkPoke.setValue(d);acDefPoke.setValue(a);
+  setTimeout(()=>{
+    const aa=document.getElementById('atk-ability'),da=document.getElementById('def-ability');
+    const aOpts=[...aa.options].map(o=>o.value),dOpts=[...da.options].map(o=>o.value);
+    const av=da.value,dv=aa.value;
+    if(aOpts.includes(av))aa.value=av;
+    if(dOpts.includes(dv))da.value=dv;
+    calc();
+  },60);
 }
  
 // ===== PARTY =====
