@@ -125,6 +125,7 @@ select option{background:var(--input)}
 <div class="dpct" id="rp"></div>
 <div class="deff" id="re"></div>
 <div class="dko" id="rk"></div>
+<div id="rd-detail" style="font-size:.68em;color:var(--muted);margin-top:4px;line-height:1.4"></div>
 </div>
 <button class="btn" onclick="calc()">再計算</button>
 </div>
@@ -781,15 +782,17 @@ function calc(){
   SKK.forEach((k,i)=>{as[k]=cs(BS.atk[i],SP.atk[k]||0,an_,i,i===0);ds[k]=cs(BS.def[i],SP.def[k]||0,dn_,i,i===0)});
  
   const phys=mv.c==='物理',psShock=!!mv.ps,crit=document.getElementById('atk-crit').checked;
-  let A,D;
+  let A,D,baseA,baseD,rkA=0,rkD=0;
   if(phys){
-    const ra=+document.getElementById('atk-rk-a').value,rd=+document.getElementById('def-rk-b').value;
-    A=Math.floor(as.atk*rm(crit?Math.max(ra,0):ra));
-    D=Math.floor(ds.def*rm(crit?Math.min(rd,0):rd));
+    rkA=+document.getElementById('atk-rk-a').value;rkD=+document.getElementById('def-rk-b').value;
+    baseA=as.atk;baseD=ds.def;
+    A=Math.floor(baseA*rm(crit?Math.max(rkA,0):rkA));
+    D=Math.floor(baseD*rm(crit?Math.min(rkD,0):rkD));
   }else{
-    const rc=+document.getElementById('atk-rk-c').value,rd=+document.getElementById('def-rk-d').value;
-    A=Math.floor(as.spa*rm(crit?Math.max(rc,0):rc));
-    D=psShock?Math.floor(ds.def*rm(crit?Math.min(+document.getElementById('def-rk-b').value,0):+document.getElementById('def-rk-b').value)):Math.floor(ds.spd*rm(crit?Math.min(rd,0):rd));
+    rkA=+document.getElementById('atk-rk-c').value;rkD=+document.getElementById('def-rk-d').value;
+    baseA=as.spa;baseD=psShock?ds.def:ds.spd;
+    A=Math.floor(baseA*rm(crit?Math.max(rkA,0):rkA));
+    D=psShock?Math.floor(ds.def*rm(crit?Math.min(+document.getElementById('def-rk-b').value,0):+document.getElementById('def-rk-b').value)):Math.floor(baseD*rm(crit?Math.min(rkD,0):rkD));
   }
  
   const ait=document.getElementById('atk-item').value,dit=document.getElementById('def-item').value;
@@ -919,15 +922,22 @@ function calc(){
   else if(ma*3>=ehp)ko=`${srOn?'ステロ込み':''}乱数3発`;
   else ko=Math.ceil(ehp/ma)+'発以上';
 
-  show(`${mi} ~ ${ma}`,`HP ${hp}${srOn?' (実質'+ehp+')':''} に対して`,`${mip}% ~ ${map}%`,et,ko);
+  const mods=[];
+  if(rkA!==0)mods.push(`${phys?'攻撃':'特攻'}${rkA>0?'+':''}${rkA}`);
+  if(rkD!==0)mods.push(`${phys||psShock?'防御':'特防'}${rkD>0?'+':''}${rkD}`);
+  if(aab&&aab!=='なし')mods.push('攻特性:'+aab);
+  if(dab&&dab!=='なし')mods.push('守特性:'+dab);
+  const detail=`${phys?'攻撃':'特攻'}: ${baseA}→<b>${A}</b> / ${phys||psShock?'防御':'特防'}: ${baseD}→<b>${D}</b> / 威力: <b>${pow}</b>${mods.length?'<br>'+mods.join(' | '):''}`;
+  show(`${mi} ~ ${ma}`,`HP ${hp}${srOn?' (実質'+ehp+')':''} に対して`,`${mip}% ~ ${map}%`,et,ko,detail);
 }
  
-function show(d,r,p,e,k){
+function show(d,r,p,e,k,detail){
   document.getElementById('rd').textContent=d;
   document.getElementById('rr').textContent=r;
   document.getElementById('rp').textContent=p;
   document.getElementById('re').innerHTML=e;
   document.getElementById('rk').textContent=k;
+  document.getElementById('rd-detail').innerHTML=detail||'';
 }
  
 function swap(){
