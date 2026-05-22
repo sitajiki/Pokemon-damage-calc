@@ -97,8 +97,12 @@ select option{background:var(--input)}
 <div class="spt" id="atk-spt">努力値合計: 0/32</div>
 <div class="sh">ランク補正</div>
 <div class="row2">
-<div class="fg"><label>攻撃</label><select id="atk-rk-a" class="rs"></select></div>
-<div class="fg"><label>特攻</label><select id="atk-rk-c" class="rs"></select></div>
+<div class="fg"><label>攻撃 A</label><select id="atk-rk-a" class="rs"></select></div>
+<div class="fg"><label>防御 B</label><select id="atk-rk-b" class="rs"></select></div>
+</div>
+<div class="row2">
+<div class="fg"><label>特攻 C</label><select id="atk-rk-c" class="rs"></select></div>
+<div class="fg"><label>特防 D</label><select id="atk-rk-d" class="rs"></select></div>
 </div>
 <div class="sh">技 (入力で検索)</div>
 <div class="fg">
@@ -146,8 +150,12 @@ select option{background:var(--input)}
 <div class="spt" id="def-spt">努力値合計: 0/32</div>
 <div class="sh">ランク補正</div>
 <div class="row2">
-<div class="fg"><label>防御</label><select id="def-rk-b" class="rs"></select></div>
-<div class="fg"><label>特防</label><select id="def-rk-d" class="rs"></select></div>
+<div class="fg"><label>攻撃 A</label><select id="def-rk-a" class="rs"></select></div>
+<div class="fg"><label>防御 B</label><select id="def-rk-b" class="rs"></select></div>
+</div>
+<div class="row2">
+<div class="fg"><label>特攻 C</label><select id="def-rk-c" class="rs"></select></div>
+<div class="fg"><label>特防 D</label><select id="def-rk-d" class="rs"></select></div>
 </div>
 <div class="cb"><input type="checkbox" id="def-ref"><label for="def-ref">リフレクター</label></div>
 <div class="cb"><input type="checkbox" id="def-ls"><label for="def-ls">ひかりのかべ</label></div>
@@ -690,7 +698,7 @@ function init(){
     isel.addEventListener('change',calc);
     SP[s]={hp:0,atk:0,def:0,spa:0,spd:0,spe:0};
   });
-  ['atk-rk-a','atk-rk-c','def-rk-b','def-rk-d'].forEach(id=>{
+  ['atk-rk-a','atk-rk-b','atk-rk-c','atk-rk-d','def-rk-a','def-rk-b','def-rk-c','def-rk-d'].forEach(id=>{
     const s=document.getElementById(id);
     for(let i=6;i>=-6;i--){const o=document.createElement('option');o.value=i;o.textContent=(i>0?'+':'')+i;s.appendChild(o)}
     s.value='0';s.addEventListener('change',calc);
@@ -782,17 +790,22 @@ function calc(){
   SKK.forEach((k,i)=>{as[k]=cs(BS.atk[i],SP.atk[k]||0,an_,i,i===0);ds[k]=cs(BS.def[i],SP.def[k]||0,dn_,i,i===0)});
  
   const phys=mv.c==='物理',psShock=!!mv.ps,crit=document.getElementById('atk-crit').checked;
+  const rk={aa:+document.getElementById('atk-rk-a').value,ab:+document.getElementById('atk-rk-b').value,ac:+document.getElementById('atk-rk-c').value,ad:+document.getElementById('atk-rk-d').value,da:+document.getElementById('def-rk-a').value,db:+document.getElementById('def-rk-b').value,dc:+document.getElementById('def-rk-c').value,dd:+document.getElementById('def-rk-d').value};
   let A,D,baseA,baseD,rkA=0,rkD=0;
+  const isBodyPress=mn==='ボディプレス';
+  const isFoulPlay=mn==='イカサマ';
   if(phys){
-    rkA=+document.getElementById('atk-rk-a').value;rkD=+document.getElementById('def-rk-b').value;
-    baseA=as.atk;baseD=ds.def;
+    if(isBodyPress){rkA=rk.ab;baseA=as.def}
+    else if(isFoulPlay){rkA=rk.da;baseA=ds.atk}
+    else{rkA=rk.aa;baseA=as.atk}
+    rkD=rk.db;baseD=ds.def;
     A=Math.floor(baseA*rm(crit?Math.max(rkA,0):rkA));
     D=Math.floor(baseD*rm(crit?Math.min(rkD,0):rkD));
   }else{
-    rkA=+document.getElementById('atk-rk-c').value;rkD=+document.getElementById('def-rk-d').value;
+    rkA=rk.ac;rkD=psShock?rk.db:rk.dd;
     baseA=as.spa;baseD=psShock?ds.def:ds.spd;
     A=Math.floor(baseA*rm(crit?Math.max(rkA,0):rkA));
-    D=psShock?Math.floor(ds.def*rm(crit?Math.min(+document.getElementById('def-rk-b').value,0):+document.getElementById('def-rk-b').value)):Math.floor(baseD*rm(crit?Math.min(rkD,0):rkD));
+    D=Math.floor(baseD*rm(crit?Math.min(rkD,0):rkD));
   }
  
   const ait=document.getElementById('atk-item').value,dit=document.getElementById('def-item').value;
@@ -923,11 +936,13 @@ function calc(){
   else ko=Math.ceil(ehp/ma)+'発以上';
 
   const mods=[];
-  if(rkA!==0)mods.push(`${phys?'攻撃':'特攻'}${rkA>0?'+':''}${rkA}`);
-  if(rkD!==0)mods.push(`${phys||psShock?'防御':'特防'}${rkD>0?'+':''}${rkD}`);
+  const atkLabel=isBodyPress?'防御(B)':isFoulPlay?'相手攻撃(A)':phys?'攻撃(A)':'特攻(C)';
+  const defLabel=psShock?'防御(B)':phys?'防御(B)':'特防(D)';
+  if(rkA!==0)mods.push(`${atkLabel}${rkA>0?'+':''}${rkA}`);
+  if(rkD!==0)mods.push(`${defLabel}${rkD>0?'+':''}${rkD}`);
   if(aab&&aab!=='なし')mods.push('攻特性:'+aab);
   if(dab&&dab!=='なし')mods.push('守特性:'+dab);
-  const detail=`${phys?'攻撃':'特攻'}: ${baseA}→<b>${A}</b> / ${phys||psShock?'防御':'特防'}: ${baseD}→<b>${D}</b> / 威力: <b>${pow}</b>${mods.length?'<br>'+mods.join(' | '):''}`;
+  const detail=`${atkLabel}: ${baseA}→<b>${A}</b> / ${defLabel}: ${baseD}→<b>${D}</b> / 威力: <b>${pow}</b>${mods.length?'<br>'+mods.join(' | '):''}`;
   show(`${mi} ~ ${ma}`,`HP ${hp}${srOn?' (実質'+ehp+')':''} に対して`,`${mip}% ~ ${map}%`,et,ko,detail);
 }
  
