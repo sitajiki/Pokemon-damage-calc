@@ -25,7 +25,7 @@ h1{text-align:center;font-size:1.3em;padding:10px 0;color:var(--hl)}
 input[type=number]{-moz-appearance:textfield}input::-webkit-outer-spin-button,input::-webkit-inner-spin-button{-webkit-appearance:none}
 .row2{display:grid;grid-template-columns:1fr 1fr;gap:5px}
 .row3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:5px}
-.sr{display:grid;grid-template-columns:34px 1fr 44px 44px 44px;gap:3px;align-items:center;margin-bottom:2px;font-size:.8em}
+.sr{display:grid;grid-template-columns:34px 1fr 40px 36px 36px 40px;gap:3px;align-items:center;margin-bottom:2px;font-size:.8em}
 .sl{font-weight:700;font-size:.75em}
 .sb{height:7px;border-radius:4px;background:#333;overflow:hidden}
 .sf{height:100%;border-radius:4px;transition:width .3s}
@@ -50,7 +50,7 @@ input[type=number]{-moz-appearance:textfield}input::-webkit-outer-spin-button,in
 .sh{font-size:.8em;font-weight:700;color:var(--hl);margin:6px 0 3px;border-bottom:1px solid var(--border);padding-bottom:2px}
 select option{background:var(--input)}
 .rs{width:100%;padding:2px;border-radius:4px;border:1px solid var(--border);background:var(--input);color:var(--text);font-size:.76em}
-.stat-hdr{display:grid;grid-template-columns:34px 1fr 44px 44px 44px;gap:3px;font-size:.65em;color:var(--muted);text-align:center;margin-bottom:2px;font-weight:600}
+.stat-hdr{display:grid;grid-template-columns:34px 1fr 40px 36px 36px 40px;gap:3px;font-size:.65em;color:var(--muted);text-align:center;margin-bottom:2px;font-weight:600}
 /* Autocomplete */
 .ac-wrap{position:relative}
 .ac-wrap input{width:100%;padding:5px 7px;border-radius:6px;border:1px solid var(--border);background:var(--input);color:var(--text);font-size:.84em}
@@ -91,8 +91,9 @@ select option{background:var(--input)}
 <div class="fg"><label>特性</label><select id="atk-ability"></select></div>
 </div>
 <div class="fg"><label>持ち物</label><select id="atk-item"></select></div>
+<div class="fg"><label>現在HP (%)</label><input type="number" id="atk-hp-pct" min="1" max="100" value="100"></div>
 <div class="sh">能力値</div>
-<div class="stat-hdr"><span></span><span></span><span>種族値</span><span>努力値</span><span>実数値</span></div>
+<div class="stat-hdr"><span></span><span></span><span>種族値</span><span>個体値</span><span>努力値</span><span>実数値</span></div>
 <div id="atk-stats"></div>
 <div class="spt" id="atk-spt">努力値合計: 0/32</div>
 <div class="sh">ランク補正</div>
@@ -104,11 +105,14 @@ select option{background:var(--input)}
 <div class="fg"><label>特攻 C</label><select id="atk-rk-c" class="rs"></select></div>
 <div class="fg"><label>特防 D</label><select id="atk-rk-d" class="rs"></select></div>
 </div>
-<div class="sh">技 (入力で検索)</div>
+<div class="sh">技 (入力で検索・最大4つ)</div>
 <div class="fg">
-<div class="ac-wrap"><input type="text" id="atk-move-input" placeholder="技名を入力..." autocomplete="off"><div class="ac-list" id="atk-move-list"></div></div>
+<div class="ac-wrap"><input type="text" id="atk-move-input" placeholder="技1を入力..." autocomplete="off"><div class="ac-list" id="atk-move-list"></div></div>
 <div class="mi" id="atk-mi"></div>
 </div>
+<div class="fg"><div class="ac-wrap"><input type="text" id="atk-move-input2" placeholder="技2 (任意)" autocomplete="off"><div class="ac-list" id="atk-move-list2"></div></div></div>
+<div class="fg"><div class="ac-wrap"><input type="text" id="atk-move-input3" placeholder="技3 (任意)" autocomplete="off"><div class="ac-list" id="atk-move-list3"></div></div></div>
+<div class="fg"><div class="ac-wrap"><input type="text" id="atk-move-input4" placeholder="技4 (任意)" autocomplete="off"><div class="ac-list" id="atk-move-list4"></div></div></div>
 <div class="cb"><input type="checkbox" id="atk-crit"><label for="atk-crit">急所</label></div>
 <div class="cb"><input type="checkbox" id="atk-burn"><label for="atk-burn">やけど</label></div>
 <div class="cb"><input type="checkbox" id="atk-charge"><label for="atk-charge">じゅうでん (でんき1.5倍)</label></div>
@@ -121,6 +125,15 @@ select option{background:var(--input)}
 <div class="fg"><label>フィールド</label><select id="terrain"><option value="none">なし</option><option value="electric">エレキ</option><option value="grassy">グラス</option><option value="psychic">サイコ</option><option value="misty">ミスト</option></select></div>
 <div class="fg"><label>形式</label><select id="fmt"><option value="single">シングル</option><option value="double">ダブル</option></select></div>
 <div class="cb"><input type="checkbox" id="spread"><label for="spread">範囲技</label></div>
+<div class="row2">
+<div class="cb"><input type="checkbox" id="tw-atk"><label for="tw-atk">追風攻</label></div>
+<div class="cb"><input type="checkbox" id="tw-def"><label for="tw-def">追風守</label></div>
+</div>
+<div class="row2">
+<div class="cb"><input type="checkbox" id="par-atk"><label for="par-atk">まひ攻</label></div>
+<div class="cb"><input type="checkbox" id="par-def"><label for="par-def">まひ守</label></div>
+</div>
+<div id="spd-cmp" style="font-size:.72em;text-align:center;color:var(--muted)"></div>
 <button class="swp" onclick="swap()">&#8596; 入れ替え</button>
 <div class="rbox">
 <div style="font-size:.78em;color:var(--muted)">ダメージ</div>
@@ -131,7 +144,12 @@ select option{background:var(--input)}
 <div class="dko" id="rk"></div>
 <div id="rd-detail" style="font-size:.68em;color:var(--muted);margin-top:4px;line-height:1.4"></div>
 </div>
+<div id="mv-table" style="font-size:.72em;margin-top:6px"></div>
 <button class="btn" onclick="calc()">再計算</button>
+<button class="swp" onclick="survCalc()" style="margin-top:6px">&#128737; 耐え調整計算 (技1)</button>
+<div id="surv-out" style="font-size:.72em;color:var(--muted);text-align:center"></div>
+<button class="swp" onclick="shareURL()" style="margin-top:6px">&#128279; 共有URLコピー</button>
+<button class="swp" onclick="resetAll()" style="margin-top:6px">&#8634; 条件リセット</button>
 </div>
 <!-- DEF -->
 <div class="panel" id="dp">
@@ -144,8 +162,9 @@ select option{background:var(--input)}
 <div class="fg"><label>特性</label><select id="def-ability"></select></div>
 </div>
 <div class="fg"><label>持ち物</label><select id="def-item"></select></div>
+<div class="fg"><label>現在HP (%)</label><input type="number" id="def-hp-pct" min="1" max="100" value="100"></div>
 <div class="sh">能力値</div>
-<div class="stat-hdr"><span></span><span></span><span>種族値</span><span>努力値</span><span>実数値</span></div>
+<div class="stat-hdr"><span></span><span></span><span>種族値</span><span>個体値</span><span>努力値</span><span>実数値</span></div>
 <div id="def-stats"></div>
 <div class="spt" id="def-spt">努力値合計: 0/32</div>
 <div class="sh">ランク補正</div>
@@ -162,6 +181,8 @@ select option{background:var(--input)}
 <div class="cb"><input type="checkbox" id="def-av"><label for="def-av">オーロラベール</label></div>
 <div class="cb"><input type="checkbox" id="def-fg"><label for="def-fg">フレンドガード</label></div>
 <div class="cb"><input type="checkbox" id="def-sr"><label for="def-sr">ステルスロック</label></div>
+<div class="cb"><input type="checkbox" id="def-leech"><label for="def-leech">やどりぎのタネ (1/8)</label></div>
+<div class="cb"><input type="checkbox" id="def-psn"><label for="def-psn">どく (1/8)</label></div>
 </div>
 </div>
 </div>
@@ -169,7 +190,8 @@ select option{background:var(--input)}
 <div class="party-title">&#128101; マイパーティ</div>
 <div class="party-grid" id="party-grid"></div>
 <div class="party-btns">
-<button onclick="partySave()">&#9876; 攻撃側を保存</button>
+<button onclick="partySave('atk')">&#9876; 攻撃側を保存</button>
+<button onclick="partySave('def')">&#128737; 防御側を保存</button>
 <button onclick="partyExport()">&#128230; エクスポート</button>
 <button onclick="partyImport()">&#128229; インポート</button>
 </div>
@@ -647,14 +669,24 @@ const IT=[{n:"なし",id:"none"},{n:"こだわりハチマキ",id:"cb"},{n:"こ�
  
 // ===== HELPERS =====
 const SP={atk:{},def:{}};
+const IV={atk:[31,31,31,31,31,31],def:[31,31,31,31,31,31]};
 const BS={atk:[100,100,100,100,100,100],def:[100,100,100,100,100,100]}; // custom base stats
-function cs(b,sp,nat,i,hp){if(hp)return Math.floor((2*b+31+2*sp)*50/100)+60;const r=Math.floor((2*b+31+2*sp)*50/100)+5;const ni=i-1;let m=1;if(ni>=0&&ni<nat.length){if(nat[ni]===1)m=1.1;else if(nat[ni]===-1)m=0.9}return Math.floor(r*m)}
+function cs(b,sp,nat,i,hp,iv){if(iv===undefined)iv=31;if(hp)return Math.floor((2*b+iv+2*sp)*50/100)+60;const r=Math.floor((2*b+iv+2*sp)*50/100)+5;const ni=i-1;let m=1;if(ni>=0&&ni<nat.length){if(nat[ni]===1)m=1.1;else if(nat[ni]===-1)m=0.9}return Math.floor(r*m)}
 function rm(r){return r>=0?(2+r)/2:2/(2-r)}
 function t2c(t){return{ノーマル:"#A8A77A",ほのお:"#EE8130",みず:"#6390F0",でんき:"#F7D02C",くさ:"#7AC74C",こおり:"#96D9D6",かくとう:"#C22E28",どく:"#A33EA1",じめん:"#E2BF65",ひこう:"#A98FF3",エスパー:"#F95587",むし:"#A6B91A",いわ:"#B6A136",ゴースト:"#735797",ドラゴン:"#6F35FC",あく:"#705746",はがね:"#B7B7CE",フェアリー:"#D685AD"}[t]||"#888"}
- 
+
+// ===== MOVE CATEGORY LISTS =====
+const SHEER=["いわなだれ","アイアンヘッド","エアスラッシュ","かみなり","10まんボルト","ほうでん","かえんほうしゃ","だいもんじ","ねっぷう","ふんえん","マジカルフレイム","ムーンフォース","じゃれつく","かみくだく","あくのはどう","シャドーボール","ラスターカノン","れいとうビーム","ふぶき","つららおとし","がんせきふうじ","ローキック","ヘドロばくだん","ヘドロウェーブ","ダストシュート","どくづき","クロスポイズン","ねっとう","だくりゅう","ぼうふう","サイコキネシス","エナジーボール","きあいだま","ばくれつパンチ","かみなりパンチ","ほのおのパンチ","れいとうパンチ","こおりのキバ","ほのおのキバ","かみなりのキバ","どくどくのキバ","のしかかり","ふんどのこぶし","うちおとす","ゴッドバード","じならし","こごえるかぜ","エレキネット","マッドショット","しねんのずつき","エレクトロビーム","ブレイズキック","シェルアームズ","れんごく","ベノムショック","トライアタック","ニトロチャージ","アクアステップ","オーラぐるま"];
+const _PULSE=["はどうだん","りゅうのはどう","あくのはどう","みずのはどう","はめつのひかり","だいちのはどう"];
+const _BITE=["かみくだく","かみつく","ほのおのキバ","こおりのキバ","かみなりのキバ","どくどくのキバ","サイコファング"];
+const _SLICE=["ひけん・ちえなみ","サイコカッター","シェルブレード","シザークロス","アクアカッター","エアカッター","リーフブレード","つじぎり","つばめがえし","せいなるつるぎ","ストーンエッジ","ソーラーブレード","がんせきアックス","はなふぶき","ドラゴンクロー","かわらわり","ブレイククロー","フェイタルクロー","シャドークロー","スマートホーン","むねんのつるぎ","かげぬい","3ぼんのや","ひょうざんおろし","アーマーキャノン","アイアンヘッド","アイアンテール","ネズミざん","キラースピン","ドゲザン"];
+const _RECOIL=["フレアドライブ","ブレイブバード","ウッドハンマー","すてみタックル","ウェーブタックル","ボルテッカー","ワイルドボルト","ドラゴンダイブ","もろはのずつき","とびひざげり","とびかかる","アイアンローラー"];
+const _PUNCH=["かみなりパンチ","ほのおのパンチ","れいとうパンチ","ばくれつパンチ","マッハパンチ","バレットパンチ","ドレインパンチ","アームハンマー","シャドーパンチ","きあいパンチ","アイスハンマー","コメットパンチ","ジェットパンチ","すいりゅうれんだ"];
+const CBIDS=['atk-crit','atk-burn','atk-charge','atk-hh','atk-pinch','spread','def-ref','def-ls','def-av','def-fg','def-sr','def-leech','def-psn','tw-atk','tw-def','par-atk','par-def'];
+
 // ===== AUTOCOMPLETE =====
-function toKata(s){return s.replace(/[\u3041-\u3096]/g,c=>String.fromCharCode(c.charCodeAt(0)+0x60))}
-function toHira(s){return s.replace(/[\u30A1-\u30F6]/g,c=>String.fromCharCode(c.charCodeAt(0)-0x60))}
+function toKata(s){return s.replace(/[ぁ-ゖ]/g,c=>String.fromCharCode(c.charCodeAt(0)+0x60))}
+function toHira(s){return s.replace(/[ァ-ヶ]/g,c=>String.fromCharCode(c.charCodeAt(0)-0x60))}
 function setupAC(inputId,listId,data,onSelect){
   const inp=document.getElementById(inputId),list=document.getElementById(listId);
   let sel=-1,items=[];
@@ -679,9 +711,9 @@ function setupAC(inputId,listId,data,onSelect){
   });
   return{setValue(v){inp.value=v;onSelect(v)}};
 }
- 
-let acAtkPoke,acDefPoke,acMove;
- 
+
+let acAtkPoke,acDefPoke,acMove,acMove2,acMove3,acMove4;
+
 function init(){
   const pdata=Object.keys(P).sort((a,b)=>a.localeCompare(b,'ja')).map(n=>{
     const p=P[n];return{name:n,sub:p.t.join('/')};
@@ -689,11 +721,14 @@ function init(){
   const mdata=Object.keys(M).sort((a,b)=>a.localeCompare(b,'ja')).map(n=>{
     const m=M[n];return{name:n,sub:`${m.t} ${m.c} ${m.p>0?m.p:''}`};
   });
- 
+
   acAtkPoke=setupAC('atk-pokemon-input','atk-pokemon-list',pdata,n=>onPC('atk',n));
   acDefPoke=setupAC('def-pokemon-input','def-pokemon-list',pdata,n=>onPC('def',n));
   acMove=setupAC('atk-move-input','atk-move-list',mdata,n=>onMC(n));
- 
+  acMove2=setupAC('atk-move-input2','atk-move-list2',mdata,()=>calc());
+  acMove3=setupAC('atk-move-input3','atk-move-list3',mdata,()=>calc());
+  acMove4=setupAC('atk-move-input4','atk-move-list4',mdata,()=>calc());
+
   ['atk','def'].forEach(s=>{
     const sel=document.getElementById(s+'-nature');
     Object.keys(NT).forEach(n=>{const o=document.createElement('option');o.value=n;o.textContent=n;sel.appendChild(o)});
@@ -709,21 +744,20 @@ function init(){
     s.value='0';s.addEventListener('change',calc);
   });
   document.querySelectorAll('input[type=checkbox]').forEach(cb=>cb.addEventListener('change',calc));
-  document.getElementById('weather').addEventListener('change',calc);
-  document.getElementById('terrain').addEventListener('change',calc);
-  document.getElementById('fmt').addEventListener('change',calc);
- 
+  ['weather','terrain','fmt','atk-hp-pct','def-hp-pct'].forEach(id=>document.getElementById(id).addEventListener('change',calc));
+
   // Defaults
   document.getElementById('atk-nature').value='いじっぱり';
   document.getElementById('def-nature').value='ひかえめ';
   SP.atk={hp:0,atk:32,def:0,spa:0,spd:0,spe:0};
   SP.def={hp:0,atk:0,def:0,spa:32,spd:0,spe:0};
- 
+
   acAtkPoke.setValue('ガブリアス');
   acDefPoke.setValue('アシレーヌ');
   acMove.setValue('じしん');
+  applyHash();
 }
- 
+
 function onPC(side,name){
   const p=P[name];
   if(p){
@@ -743,27 +777,28 @@ function onPC(side,name){
   renderS(side);
   calc();
 }
- 
+
 function renderS(side){
   const nat=NT[document.getElementById(side+'-nature').value]||[0,0,0,0,0];
   const c=document.getElementById(side+'-stats');
   const cols=['#4CAF50','#F44336','#FF9800','#2196F3','#9C27B0','#00BCD4'];
   let h='';
   SKK.forEach((k,i)=>{
-    const b=BS[side][i],sp=SP[side][k]||0,v=cs(b,sp,nat,i,i===0);
+    const b=BS[side][i],sp=SP[side][k]||0,iv=IV[side][i],v=cs(b,sp,nat,i,i===0,iv);
     const pct=Math.min(b/200*100,100);
     let nm='';if(i>0&&nat[i-1]===1)nm=' <span style="color:#f44">&#8593;</span>';if(i>0&&nat[i-1]===-1)nm=' <span style="color:#48f">&#8595;</span>';
-    h+=`<div class="sr"><div class="sl">${SK[i]}${nm}</div><div class="sb"><div class="sf" style="width:${pct}%;background:${cols[i]}"></div></div><div><input class="spi" type="number" min="1" max="255" value="${b}" onchange="onBS('${side}',${i},this.value)" title="種族値を直接編集"></div><div><input class="spi" type="number" min="0" max="32" value="${sp}" onchange="onSP('${side}','${k}',this.value)"></div><div class="sv">${v}</div></div>`;
+    h+=`<div class="sr"><div class="sl">${SK[i]}${nm}</div><div class="sb"><div class="sf" style="width:${pct}%;background:${cols[i]}"></div></div><div><input class="spi" type="number" min="1" max="255" value="${b}" onchange="onBS('${side}',${i},this.value)" title="種族値を直接編集"></div><div><input class="spi" type="number" min="0" max="31" value="${iv}" onchange="onIV('${side}',${i},this.value)" title="個体値"></div><div><input class="spi" type="number" min="0" max="32" value="${sp}" onchange="onSP('${side}','${k}',this.value)"></div><div class="sv">${v}</div></div>`;
   });
   c.innerHTML=h;
   const tot=Object.values(SP[side]).reduce((a,b)=>a+b,0);
   const el=document.getElementById(side+'-spt');
   el.textContent=`努力値合計: ${tot}/32`;el.style.color=tot>32?'#f44':'var(--muted)';
 }
- 
+
 function onSP(side,k,v){SP[side][k]=Math.max(0,Math.min(32,parseInt(v)||0));renderS(side);calc()}
 function onBS(side,i,v){BS[side][i]=Math.max(1,Math.min(255,parseInt(v)||1));renderS(side);calc()}
- 
+function onIV(side,i,v){IV[side][i]=Math.max(0,Math.min(31,parseInt(v)===0?0:(parseInt(v)||31)));renderS(side);calc()}
+
 function onNC(side){
   const nat=NT[document.getElementById(side+'-nature').value]||[0,0,0,0,0];
   const info=document.getElementById(side+'-ni');
@@ -771,54 +806,118 @@ function onNC(side){
   info.textContent=u.length?`↑${u.join(',')} ↓${d.join(',')}`:'補正なし';
   renderS(side);
 }
- 
+
 function onMC(name){
-  const m=M[name];if(!m)return;
-  document.getElementById('atk-mi').innerHTML=`<span class="tb" style="background:${t2c(m.t)};font-size:.68em">${m.t}</span> ${m.c} ${m.p>0?'威力'+m.p:''}${m.h?' ×'+m.h+'回':''}`;
+  const m=M[name];
+  if(m)document.getElementById('atk-mi').innerHTML=`<span class="tb" style="background:${t2c(m.t)};font-size:.68em">${m.t}</span> ${m.c} ${m.p>0?'威力'+m.p:''}${m.h?' ×'+m.h+'回':''}`;
   calc();
 }
- 
-function calc(){
+
+// ===== CONTEXT =====
+function sideStats(side){
+  const nat=NT[document.getElementById(side+'-nature').value]||[0,0,0,0,0];
+  const st={};SKK.forEach((k,i)=>{st[k]=cs(BS[side][i],SP[side][k]||0,nat,i,i===0,IV[side][i])});
+  return st;
+}
+function pctVal(id){const v=parseInt(document.getElementById(id).value);return Math.max(1,Math.min(100,isNaN(v)?100:v))}
+function buildCtx(){
   const an=document.getElementById('atk-pokemon-input').value;
   const dn=document.getElementById('def-pokemon-input').value;
-  const ap=P[an]||{t:["ノーマル"],b:BS.atk,a:["なし"]};
-  const dp=P[dn]||{t:["ノーマル"],b:BS.def,a:["なし"]};
-  if(!an||!dn){show('-','','','','');return}
-  const mn=document.getElementById('atk-move-input').value;
-  const mv=M[mn];
-  if(!mv||mv.c==='変化'){show('-','変化技','','','');return}
-  if(mv.p<=0){show('-','威力なし','','','');return}
- 
-  const an_=NT[document.getElementById('atk-nature').value]||[0,0,0,0,0];
-  const dn_=NT[document.getElementById('def-nature').value]||[0,0,0,0,0];
-  const as={},ds={};
-  SKK.forEach((k,i)=>{as[k]=cs(BS.atk[i],SP.atk[k]||0,an_,i,i===0);ds[k]=cs(BS.def[i],SP.def[k]||0,dn_,i,i===0)});
- 
-  const phys=mv.c==='物理',psShock=!!mv.ps,crit=document.getElementById('atk-crit').checked;
-  const rk={aa:+document.getElementById('atk-rk-a').value,ab:+document.getElementById('atk-rk-b').value,ac:+document.getElementById('atk-rk-c').value,ad:+document.getElementById('atk-rk-d').value,da:+document.getElementById('def-rk-a').value,db:+document.getElementById('def-rk-b').value,dc:+document.getElementById('def-rk-c').value,dd:+document.getElementById('def-rk-d').value};
-  let A,D,baseA,baseD,rkA=0,rkD=0;
-  const isBodyPress=mn==='ボディプレス';
-  const isFoulPlay=mn==='イカサマ';
-  if(phys){
-    if(isBodyPress){rkA=rk.ab;baseA=as.def}
-    else if(isFoulPlay){rkA=rk.da;baseA=ds.atk}
-    else{rkA=rk.aa;baseA=as.atk}
-    rkD=rk.db;baseD=ds.def;
-    A=Math.floor(baseA*rm(crit?Math.max(rkA,0):rkA));
-    D=Math.floor(baseD*rm(crit?Math.min(rkD,0):rkD));
-  }else{
-    rkA=rk.ac;rkD=psShock?rk.db:rk.dd;
-    baseA=as.spa;baseD=psShock?ds.def:ds.spd;
-    A=Math.floor(baseA*rm(crit?Math.max(rkA,0):rkA));
-    D=Math.floor(baseD*rm(crit?Math.min(rkD,0):rkD));
-  }
- 
-  const ait=document.getElementById('atk-item').value,dit=document.getElementById('def-item').value;
-  const aab=document.getElementById('atk-ability').value,dab=document.getElementById('def-ability').value;
-  const w=document.getElementById('weather').value;
-  const molded=aab==='かたやぶり'||aab==='すじがねいり';
-  const pinch=document.getElementById('atk-pinch').checked;
+  const g=id=>document.getElementById(id);
+  return {
+    an,dn,
+    ap:P[an]||{t:["ノーマル"],b:BS.atk,a:["なし"]},
+    dp:P[dn]||{t:["ノーマル"],b:BS.def,a:["なし"]},
+    as:sideStats('atk'),ds:sideStats('def'),
+    ait:g('atk-item').value,dit:g('def-item').value,
+    aab:g('atk-ability').value,dab:g('def-ability').value,
+    w:g('weather').value,tr:g('terrain').value,
+    dbl:g('fmt').value==='double',
+    crit:g('atk-crit').checked,burn:g('atk-burn').checked,
+    charge:g('atk-charge').checked,hh:g('atk-hh').checked,
+    spread:g('spread').checked,
+    atkPct:pctVal('atk-hp-pct'),defPct:pctVal('def-hp-pct'),
+    pinchCb:g('atk-pinch').checked,
+    rk:{aa:+g('atk-rk-a').value,ab:+g('atk-rk-b').value,ac:+g('atk-rk-c').value,ad:+g('atk-rk-d').value,da:+g('def-rk-a').value,db:+g('def-rk-b').value,dc:+g('def-rk-c').value,dd:+g('def-rk-d').value},
+    srOn:g('def-sr').checked,leech:g('def-leech').checked,psn:g('def-psn').checked,
+    ref:g('def-ref').checked,ls:g('def-ls').checked,av:g('def-av').checked,fg:g('def-fg').checked,
+  };
+}
 
+// ===== KO SIMULATION =====
+function simKO(firstArr,restArr,start,hp,res){
+  let states=new Map();states.set(start+'|0',1);
+  const pKO=[];let cum=0;
+  for(let n=1;n<=9;n++){
+    const next=new Map();let ko=0;
+    for(const [key,pr] of states){
+      const parts=key.split('|');let cur=+parts[0];const sitUsed=parts[1]==='1';
+      for(let i=0;i<16;i++){
+        const p=pr/16;
+        const d=n===1?firstArr[i]:restArr[i];
+        let c2;
+        if(res.sash&&cur===hp&&d>=cur)c2=1;else c2=cur-d;
+        if(c2<=0){ko+=p;continue}
+        c2=Math.min(hp,c2+res.heal);
+        let su=sitUsed;
+        if(res.sitrus&&!su&&c2<=Math.floor(hp/2)){c2=Math.min(hp,c2+Math.floor(hp/4));su=true}
+        c2-=res.dot;
+        if(c2<=0){ko+=p;continue}
+        const k=c2+'|'+(su?1:0);
+        next.set(k,(next.get(k)||0)+p);
+      }
+    }
+    cum+=ko;pKO.push(cum);
+    states=next;
+    if(cum>=0.999999)break;
+  }
+  return pKO;
+}
+function koText(pKO,prefix){
+  for(let n=1;n<=pKO.length;n++){
+    const p=pKO[n-1];
+    if(p>1e-9){
+      if(p>=0.999999)return prefix+'確定'+n+'発';
+      return prefix+'乱数'+n+'発 ('+(p*100).toFixed(1)+'%)';
+    }
+  }
+  return prefix+'10発以上';
+}
+
+// ===== DAMAGE CALC PER MOVE =====
+function calcMove(mn,c){
+  const mv=M[mn];
+  if(!mn||!mv)return null;
+  if(mv.c==='変化'||mv.p<=0)return {invalid:true,name:mn};
+  const aab=c.aab,dab=c.dab,ait=c.ait,dit=c.dit,w=c.w;
+  const molded=aab==='かたやぶり'||aab==='すじがねいり';
+  const pinch=c.pinchCb||c.atkPct<=33;
+  // skin abilities: convert Normal-type moves
+  let mt=mv.t,pow=mv.p,skin=false;
+  if(mt==='ノーマル'){
+    if(aab==='スカイスキン'){mt='ひこう';skin=true}
+    else if(aab==='フェアリースキン'){mt='フェアリー';skin=true}
+    else if(aab==='フリーズスキン'){mt='こおり';skin=true}
+  }
+  if(skin)pow=Math.floor(pow*1.2);
+  const phys=mv.c==='物理',psShock=!!mv.ps,crit=c.crit;
+  const isBP=mn==='ボディプレス',isFP=mn==='イカサマ';
+  // ranks (with Unaware)
+  let rkA,rkD,baseA,baseD;
+  if(phys){
+    if(isBP){rkA=c.rk.ab;baseA=c.as.def}
+    else if(isFP){rkA=c.rk.da;baseA=c.ds.atk}
+    else{rkA=c.rk.aa;baseA=c.as.atk}
+    rkD=c.rk.db;baseD=c.ds.def;
+  }else{
+    rkA=c.rk.ac;baseA=c.as.spa;
+    rkD=psShock?c.rk.db:c.rk.dd;baseD=psShock?c.ds.def:c.ds.spd;
+  }
+  if(!molded&&dab==='てんねん')rkA=0;
+  if(aab==='てんねん')rkD=0;
+  let A=Math.floor(baseA*rm(crit?Math.max(rkA,0):rkA));
+  let D=Math.floor(baseD*rm(crit?Math.min(rkD,0):rkD));
+  // A/D mods
   if(ait==='cb'&&phys)A=Math.floor(A*1.5);
   if(ait==='cs'&&!phys)A=Math.floor(A*1.5);
   if(dit==='av'&&!phys&&!psShock)D=Math.floor(D*1.5);
@@ -829,128 +928,189 @@ function calc(){
   if(aab==='サンパワー'&&!phys&&w==='sun')A=Math.floor(A*1.5);
   if(!molded&&dab==='ファーコート'&&phys)D*=2;
   if(!molded&&dab==='ふしぎなうろこ'&&phys)D=Math.floor(D*1.5);
-
-  let pow=mv.p;
+  // power mods
   if(mn==='はたきおとす'&&dit!=='none')pow=Math.floor(pow*1.5);
   if(aab==='テクニシャン'&&pow<=60)pow=Math.floor(pow*1.5);
   if(ait==='lo')pow=Math.floor(pow*5324/4096);
   if(ait==='tb')pow=Math.floor(pow*1.2);
-  if(document.getElementById('atk-charge').checked&&mv.t==='でんき')pow=Math.floor(pow*1.5);
+  if(c.charge&&mt==='でんき')pow=Math.floor(pow*1.5);
   if(aab==='かたいツメ'&&phys)pow=Math.floor(pow*1.3);
+  if(aab==='ちからずく'&&SHEER.includes(mn))pow=Math.floor(pow*1.3);
   if(pinch){
-    if(aab==='もうか'&&mv.t==='ほのお')pow=Math.floor(pow*1.5);
-    if(aab==='げきりゅう'&&mv.t==='みず')pow=Math.floor(pow*1.5);
-    if(aab==='しんりょく'&&mv.t==='くさ')pow=Math.floor(pow*1.5);
-    if(aab==='むしのしらせ'&&mv.t==='むし')pow=Math.floor(pow*1.5);
+    if(aab==='もうか'&&mt==='ほのお')pow=Math.floor(pow*1.5);
+    if(aab==='げきりゅう'&&mt==='みず')pow=Math.floor(pow*1.5);
+    if(aab==='しんりょく'&&mt==='くさ')pow=Math.floor(pow*1.5);
+    if(aab==='むしのしらせ'&&mt==='むし')pow=Math.floor(pow*1.5);
   }
-  if(w==='sand'&&aab==='すなのちから'&&(mv.t==='いわ'||mv.t==='じめん'||mv.t==='はがね'))pow=Math.floor(pow*1.3);
-  const _PULSE=['はどうだん','りゅうのはどう','あくのはどう','みずのはどう','はめつのひかり'];
+  if(w==='sand'&&aab==='すなのちから'&&(mt==='いわ'||mt==='じめん'||mt==='はがね'))pow=Math.floor(pow*1.3);
   if(aab==='メガランチャー'&&_PULSE.includes(mn))pow=Math.floor(pow*1.5);
-  const _BITE=['かみくだく','かみつく','ほのおのキバ','こおりのキバ','かみなりのキバ','どくどくのキバ','サイコファング'];
   if(aab==='がんじょうあご'&&_BITE.includes(mn))pow=Math.floor(pow*1.5);
-  const _SLICE=['ひけん・ちえなみ','サイコカッター','シェルブレード','シザークロス','アクアカッター','エアカッター','リーフブレード','つじぎり','つばめがえし','せいなるつるぎ','ストーンエッジ','ソーラーブレード','がんせきアックス','はなふぶき','ドラゴンクロー','かわらわり','ブレイククロー','フェイタルクロー','シャドークロー','スマートホーン','むねんのつるぎ','かげぬい','3ぼんのや','ひょうざんおろし','アーマーキャノン','アイアンヘッド','アイアンテール'];
   if(aab==='きれあじ'&&_SLICE.includes(mn))pow=Math.floor(pow*1.5);
-  const _RECOIL=['フレアドライブ','ブレイブバード','ウッドハンマー','すてみタックル','ウェーブタックル','ボルテッカー','ワイルドボルト','ドラゴンダイブ','もろはのずつき','とびひざげり','とびかかる'];
   if(aab==='すてみ'&&_RECOIL.includes(mn))pow=Math.floor(pow*1.2);
-  const _PUNCH=['かみなりパンチ','ほのおのパンチ','れいとうパンチ','ばくれつパンチ','マッハパンチ','バレットパンチ','ドレインパンチ','アームハンマー','シャドーパンチ','きあいパンチ','アイスハンマー','コメットパンチ'];
   if(aab==='てつのこぶし'&&_PUNCH.includes(mn))pow=Math.floor(pow*1.2);
   const auraBreak=aab==='オーラブレイク'||dab==='オーラブレイク';
   const auraMul=auraBreak?0.75:4/3;
-  if((aab==='フェアリーオーラ'||dab==='フェアリーオーラ')&&mv.t==='フェアリー')pow=Math.floor(pow*auraMul);
-  if((aab==='ダークオーラ'||dab==='ダークオーラ')&&mv.t==='あく')pow=Math.floor(pow*auraMul);
+  if((aab==='フェアリーオーラ'||dab==='フェアリーオーラ')&&mt==='フェアリー')pow=Math.floor(pow*auraMul);
+  if((aab==='ダークオーラ'||dab==='ダークオーラ')&&mt==='あく')pow=Math.floor(pow*auraMul);
 
-  let bd=Math.floor(Math.floor(Math.floor(22)*pow*A/D)/50+2);
- 
-  if(document.getElementById('spread').checked&&document.getElementById('fmt').value==='double')bd=Math.floor(bd*.75);
+  let bd=Math.floor(Math.floor(22*pow*A/D)/50+2);
+  if(c.spread&&c.dbl)bd=Math.floor(bd*.75);
+  if(w==='sun'){if(mt==='ほのお')bd=Math.floor(bd*1.5);if(mt==='みず')bd=Math.floor(bd*.5)}
+  if(w==='rain'){if(mt==='みず')bd=Math.floor(bd*1.5);if(mt==='ほのお')bd=Math.floor(bd*.5)}
+  if(w==='sand'&&!phys&&c.dp.t.includes('いわ'))bd=Math.floor(bd*2/3);
+  if(w==='snow'&&phys&&c.dp.t.includes('こおり'))bd=Math.floor(bd*2/3);
+  if(crit)bd=Math.floor(bd*(aab==='スナイパー'?2.25:1.5));
+  if(c.tr==='electric'&&mt==='でんき')bd=Math.floor(bd*1.3);
+  if(c.tr==='grassy'&&mt==='くさ')bd=Math.floor(bd*1.3);
+  if(c.tr==='psychic'&&mt==='エスパー')bd=Math.floor(bd*1.3);
+  if(c.tr==='misty'&&mt==='ドラゴン')bd=Math.floor(bd*.5);
+  if(c.hh)bd=Math.floor(bd*1.5);
 
-  if(w==='sun'){if(mv.t==='ほのお')bd=Math.floor(bd*1.5);if(mv.t==='みず')bd=Math.floor(bd*.5)}
-  if(w==='rain'){if(mv.t==='みず')bd=Math.floor(bd*1.5);if(mv.t==='ほのお')bd=Math.floor(bd*.5)}
-  if(w==='sand'&&!phys&&dp.t.includes('いわ'))bd=Math.floor(bd*2/3);
-  if(w==='snow'&&phys&&dp.t.includes('こおり'))bd=Math.floor(bd*2/3);
- 
-  if(crit)bd=Math.floor(bd*1.5);
- 
-  const tr=document.getElementById('terrain').value;
-  if(tr==='electric'&&mv.t==='でんき')bd=Math.floor(bd*1.3);
-  if(tr==='grassy'&&mv.t==='くさ')bd=Math.floor(bd*1.3);
-  if(tr==='psychic'&&mv.t==='エスパー')bd=Math.floor(bd*1.3);
-  if(tr==='misty'&&mv.t==='ドラゴン')bd=Math.floor(bd*.5);
- 
-  if(document.getElementById('atk-hh').checked)bd=Math.floor(bd*1.5);
- 
-  const immune=!molded&&((dab==='ふゆう'&&mv.t==='じめん')||(dab==='ちくでん'&&mv.t==='でんき')||(dab==='ちょすい'&&mv.t==='みず')||(dab==='ひらいしん'&&mv.t==='でんき')||(dab==='そうしょく'&&mv.t==='くさ')||(dab==='もらいび'&&mv.t==='ほのお')||(dab==='どしょく'&&mv.t==='じめん'));
-  const dmgs=[];
+  const immune=!molded&&((dab==='ふゆう'&&mt==='じめん')||(dab==='ちくでん'&&mt==='でんき')||(dab==='ひらいしん'&&mt==='でんき')||(dab==='ちょすい'&&mt==='みず')||(dab==='よびみず'&&mt==='みず')||(dab==='そうしょく'&&mt==='くさ')||(dab==='もらいび'&&mt==='ほのお')||(dab==='どしょく'&&mt==='じめん'));
+  let ef=eff(mt,c.dp.t);if(immune)ef=0;
+
+  const hits=mv.h||1;
+  const pb=aab==='おやこあい'&&hits===1;
+  const hp=c.ds.hp;
+  const srEf=eff('いわ',c.dp.t);
+  const srDmg=c.srOn?Math.floor(hp*srEf/8):0;
+  const start=Math.max(1,Math.floor(hp*c.defPct/100)-srDmg);
+  const msOn=!molded&&dab==='マルチスケイル'&&start===hp;
+  const disg=!molded&&dab==='ばけのかわ';
+
+  // per-roll per-hit damage
+  const perHit=[],perHitF=[];
   for(let r=85;r<=100;r++){
     let d=Math.floor(bd*r/100);
-    let stab=1;if(ap.t.includes(mv.t))stab=1.5;
+    let stab=1;if(c.ap.t.includes(mt))stab=1.5;
     if(aab==='てきおうりょく'&&stab>1)stab=2;
-    if((aab==='スカイスキン'||aab==='フェアリースキン'||aab==='フリーズスキン')&&stab===1)stab=1.2;
     d=Math.floor(d*stab);
-    let ef=eff(mv.t,dp.t);
-    if(immune)ef=0;
     d=Math.floor(d*ef);
     if(ait==='eb'&&ef>1)d=Math.floor(d*1.2);
-    if(document.getElementById('atk-burn').checked&&phys&&aab!=='こんじょう')d=Math.floor(d*.5);
-    if(aab==='こんじょう'&&document.getElementById('atk-burn').checked&&phys)d=Math.floor(d*1.5);
-    if(aab==='すいほう'&&mv.t==='みず')d=Math.floor(d*2);
+    if(c.burn&&phys&&aab!=='こんじょう')d=Math.floor(d*.5);
+    if(aab==='こんじょう'&&c.burn&&phys)d=Math.floor(d*1.5);
+    if(aab==='すいほう'&&mt==='みず')d=Math.floor(d*2);
     if(!crit){
-      const dbl=document.getElementById('fmt').value==='double';
-      const sm=dbl?2/3:.5;
-      if(phys&&(document.getElementById('def-ref').checked||document.getElementById('def-av').checked))d=Math.floor(d*sm);
-      if(!phys&&!psShock&&(document.getElementById('def-ls').checked||document.getElementById('def-av').checked))d=Math.floor(d*sm);
+      const sm=c.dbl?2/3:.5;
+      if(phys&&(c.ref||c.av))d=Math.floor(d*sm);
+      if(!phys&&!psShock&&(c.ls||c.av))d=Math.floor(d*sm);
     }
-    if(document.getElementById('def-fg').checked)d=Math.floor(d*.75);
+    if(c.fg)d=Math.floor(d*.75);
     if(!molded){
-      if(dab==='あついしぼう'&&(mv.t==='ほのお'||mv.t==='こおり'))d=Math.floor(d*.5);
-      if(dab==='たいねつ'&&mv.t==='ほのお')d=Math.floor(d*.5);
-      if(dab==='すいほう'&&mv.t==='ほのお')d=Math.floor(d*.5);
-      if(dab==='マルチスケイル')d=Math.floor(d*.5);
+      if(dab==='あついしぼう'&&(mt==='ほのお'||mt==='こおり'))d=Math.floor(d*.5);
+      if(dab==='たいねつ'&&mt==='ほのお')d=Math.floor(d*.5);
+      if(dab==='すいほう'&&mt==='ほのお')d=Math.floor(d*.5);
       if((dab==='ハードロック'||dab==='フィルター')&&ef>1)d=Math.floor(d*.75);
-      if(dab==='もふもふ'&&phys&&mv.t!=='ほのお')d=Math.floor(d*.5);
+      if(dab==='もふもふ'&&phys&&mt!=='ほのお')d=Math.floor(d*.5);
       if(dab==='こおりのりんぷん'&&!phys)d=Math.floor(d*.5);
     }
     if(d<1&&ef>0)d=1;
-    dmgs.push(d);
+    let dF=msOn?Math.floor(d*.5):d;if(dF<1&&ef>0)dF=1;
+    perHit.push(d);perHitF.push(dF);
   }
- 
-  const hits=mv.h||1;
-  const mi=Math.min(...dmgs)*hits,ma=Math.max(...dmgs)*hits;
-  const hp=ds.hp;
-  const srOn=document.getElementById('def-sr').checked;
-  const srEf=eff('いわ',dp.t);
-  const srDmg=srOn?Math.floor(hp*srEf/8):0;
-  const ehp=hp-srDmg;
+  // per-attack totals
+  const atkRest=perHit.map(d=>pb?d+Math.floor(d*.25):d*hits);
+  const atkFirstMS=perHit.map((d,i)=>{
+    const f=perHitF[i];
+    if(pb)return f+Math.floor(d*.25);
+    return f+d*(hits-1);
+  });
+  let firstArr=atkFirstMS;
+  if(disg&&ef>0){
+    const chip=Math.floor(hp/8);
+    firstArr=atkRest.map((t,i)=>chip+Math.max(0,t-perHit[i]));
+  }
+  const mi=Math.min(...atkRest),ma=Math.max(...atkRest);
   const mip=(mi/hp*100).toFixed(1),map=(ma/hp*100).toFixed(1);
 
-  let ef=eff(mv.t,dp.t);if(immune)ef=0;
+  // effectiveness text
   let et='';
   if(ef===0)et='<span style="color:#888">効果なし</span>';
   else if(ef<1)et=`<span style="color:#48f">いまひとつ (×${ef})</span>`;
   else if(ef===1)et='<span style="color:#ccc">等倍</span>';
   else et=`<span style="color:#f44">効果抜群 (×${ef})</span>`;
-  if(srOn)et+=` <span style="color:#b6a136;font-size:.78em">SR -${srDmg} (${(srDmg/hp*100).toFixed(1)}%)</span>`;
+  if(c.srOn)et+=` <span style="color:#b6a136;font-size:.78em">SR -${srDmg}</span>`;
 
+  // KO calc with residuals/items
+  const grounded=!c.dp.t.includes('ひこう')&&dab!=='ふゆう';
+  const sandDmg=(w==='sand'&&!c.dp.t.includes('いわ')&&!c.dp.t.includes('じめん')&&!c.dp.t.includes('はがね'))?Math.floor(hp/16):0;
+  const dot=(dab==='マジックガード')?0:((c.leech?Math.floor(hp/8):0)+(c.psn?Math.floor(hp/8):0)+sandDmg);
+  const heal=(dit==='lf'?Math.floor(hp/16):0)+((c.tr==='grassy'&&grounded)?Math.floor(hp/16):0);
+  const notes=[];
+  if(c.srOn)notes.push('ステロ');
+  if(c.leech)notes.push('やどりぎ');
+  if(c.psn)notes.push('どく');
+  if(sandDmg&&dab!=='マジックガード')notes.push('砂');
+  if(dit==='fs'&&start===hp)notes.push('タスキ');
+  if(dit==='sb')notes.push('オボン');
+  if(dit==='lf')notes.push('残飯');
   let ko='';
   if(ef===0)ko='効果がない';
-  else if(mi>=ehp)ko=srOn&&mi<hp?'ステロ込み確定1発':'確定1発';
-  else if(ma>=ehp){const c=dmgs.filter(d=>d*hits>=ehp).length;ko=`${srOn?'ステロ込み':''}乱数1発 (${(c/16*100).toFixed(1)}%)`}
-  else if(mi*2>=ehp)ko=`${srOn?'ステロ込み':''}確定2発`;
-  else if(ma*2>=ehp)ko=`${srOn?'ステロ込み':''}乱数2発`;
-  else if(mi*3>=ehp)ko=`${srOn?'ステロ込み':''}確定3発`;
-  else if(ma*3>=ehp)ko=`${srOn?'ステロ込み':''}乱数3発`;
-  else ko=Math.ceil(ehp/ma)+'発以上';
+  else{
+    const pKO=simKO(firstArr,atkRest,start,hp,{heal,sitrus:dit==='sb',dot,sash:dit==='fs'});
+    ko=koText(pKO,notes.length?notes.join('+')+'込み ':'');
+  }
 
+  // detail
+  const sub=Math.floor(hp/4);
+  const subTxt=ef===0?'-':mi>=sub?'確定破壊':ma>=sub?'乱数破壊':'耐える';
   const mods=[];
-  const atkLabel=isBodyPress?'防御(B)':isFoulPlay?'相手攻撃(A)':phys?'攻撃(A)':'特攻(C)';
-  const defLabel=psShock?'防御(B)':phys?'防御(B)':'特防(D)';
-  if(rkA!==0)mods.push(`${atkLabel}${rkA>0?'+':''}${rkA}`);
-  if(rkD!==0)mods.push(`${defLabel}${rkD>0?'+':''}${rkD}`);
+  const atkLabel=isBP?'防御(B)':isFP?'相手攻撃(A)':phys?'攻撃(A)':'特攻(C)';
+  const defLabel=(phys||psShock)?'防御(B)':'特防(D)';
+  if(rkA!==0)mods.push(atkLabel+(rkA>0?'+':'')+rkA);
+  if(rkD!==0)mods.push(defLabel+(rkD>0?'+':'')+rkD);
+  if(skin)mods.push('スキン→'+mt);
+  if(pb)mods.push('おやこあい×1.25');
+  if(msOn)mods.push('マルチスケイル(初撃½)');
+  if(disg&&ef>0)mods.push('ばけのかわ(初撃無効)');
+  if(pinch&&['もうか','げきりゅう','しんりょく','むしのしらせ'].includes(aab))mods.push('ピンチ特性発動');
   if(aab&&aab!=='なし')mods.push('攻特性:'+aab);
   if(dab&&dab!=='なし')mods.push('守特性:'+dab);
-  const detail=`${atkLabel}: ${baseA}→<b>${A}</b> / ${defLabel}: ${baseD}→<b>${D}</b> / 威力: <b>${pow}</b>${mods.length?'<br>'+mods.join(' | '):''}`;
-  show(`${mi} ~ ${ma}`,`HP ${hp}${srOn?' (実質'+ehp+')':''} に対して`,`${mip}% ~ ${map}%`,et,ko,detail);
+  const detail=atkLabel+': '+baseA+'→<b>'+A+'</b> / '+defLabel+': '+baseD+'→<b>'+D+'</b> / 威力: <b>'+pow+'</b>'
+    +(mods.length?'<br>'+mods.join(' | '):'')
+    +'<br>みがわり(HP'+sub+'): '+subTxt;
+
+  return {name:mn,mi,ma,mip,map,et,ko,detail,start,hp,maxFirst:Math.max(...firstArr)};
 }
- 
+
+// ===== MAIN =====
+function calc(){
+  const c=buildCtx();
+  updateSpeed(c);
+  if(!c.an||!c.dn){show('-','','','','','');renderMoveTable([]);return}
+  const names=[document.getElementById('atk-move-input').value,document.getElementById('atk-move-input2').value,document.getElementById('atk-move-input3').value,document.getElementById('atk-move-input4').value].map(s=>(s||'').trim()).filter(Boolean);
+  if(!names.length){show('-','技未入力','','','','');renderMoveTable([]);return}
+  const results=names.map(n=>calcMove(n,c)).filter(Boolean);
+  const r1=results[0];
+  if(!r1||r1.invalid)show('-','変化技/威力なし','','','','');
+  else show(`${r1.mi} ~ ${r1.ma}`,`HP ${r1.hp}${r1.start!==r1.hp?' (開始'+r1.start+')':''} に対して`,`${r1.mip}% ~ ${r1.map}%`,r1.et,r1.ko,r1.detail);
+  renderMoveTable(results);
+}
+
+function renderMoveTable(rs){
+  const el=document.getElementById('mv-table');
+  if(!rs||rs.length<2){el.innerHTML='';return}
+  el.innerHTML=rs.map(r=>{
+    if(r.invalid)return `<div style="display:flex;justify-content:space-between;border-bottom:1px solid var(--border);padding:2px 0"><span>${r.name}</span><span style="color:var(--muted)">変化技</span></div>`;
+    return `<div style="display:flex;justify-content:space-between;gap:4px;border-bottom:1px solid var(--border);padding:2px 0"><span style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${r.name}</span><span style="white-space:nowrap">${r.mip}~${r.map}% ${r.ko}</span></div>`;
+  }).join('');
+}
+
+function updateSpeed(c){
+  let sa=c.as.spe,sd=c.ds.spe;
+  if(c.ait==='csc')sa=Math.floor(sa*1.5);
+  if(c.dit==='csc')sd=Math.floor(sd*1.5);
+  const wab=(ab,w2)=>(ab==='すいすい'&&w2==='rain')||(ab==='ようりょくそ'&&w2==='sun')||(ab==='すなかき'&&w2==='sand')||(ab==='ゆきかき'&&w2==='snow');
+  if(wab(c.aab,c.w))sa*=2;
+  if(wab(c.dab,c.w))sd*=2;
+  if(document.getElementById('tw-atk').checked)sa*=2;
+  if(document.getElementById('tw-def').checked)sd*=2;
+  if(document.getElementById('par-atk').checked)sa=Math.floor(sa*.5);
+  if(document.getElementById('par-def').checked)sd=Math.floor(sd*.5);
+  const t=sa>sd?'攻撃側が先手':sa<sd?'防御側が先手':'同速';
+  document.getElementById('spd-cmp').innerHTML=`素早さ: 攻 <b>${sa}</b> / 守 <b>${sd}</b> → ${t}`;
+}
+
 function show(d,r,p,e,k,detail){
   document.getElementById('rd').textContent=d;
   document.getElementById('rr').textContent=r;
@@ -959,23 +1119,112 @@ function show(d,r,p,e,k,detail){
   document.getElementById('rk').textContent=k;
   document.getElementById('rd-detail').innerHTML=detail||'';
 }
- 
+
+// ===== SURVIVAL EV CALC =====
+function survCalc(){
+  const out=document.getElementById('surv-out');
+  const mn=document.getElementById('atk-move-input').value;
+  const mv=M[mn];
+  if(!mn||!mv||mv.c==='変化'||mv.p<=0){out.textContent='技1が無効です';return}
+  const defKey=(mv.c==='物理'||mv.ps)?'def':'spd';
+  const origHp=SP.def.hp,origDef=SP.def[defKey];
+  const others=Object.entries(SP.def).reduce((t,[k,v])=>k==='hp'||k===defKey?t:t+v,0);
+  const budget=Math.max(0,32-others);
+  let found=null;
+  outer:
+  for(let tot=0;tot<=budget;tot++){
+    for(let h=0;h<=Math.min(32,tot);h++){
+      const dv=tot-h;if(dv>32)continue;
+      SP.def.hp=h;SP.def[defKey]=dv;
+      const r=calcMove(mn,buildCtx());
+      if(r&&!r.invalid&&r.maxFirst<r.start){found={h,dv};break outer}
+    }
+  }
+  SP.def.hp=origHp;SP.def[defKey]=origDef;
+  renderS('def');calc();
+  const dl=defKey==='def'?'B':'D';
+  out.textContent=found?`H${found.h} ${dl}${found.dv} で確定耐え (合計${found.h+found.dv})`:`EV${budget}以内では確定耐え不可`;
+}
+
+// ===== SHARE URL / RESET =====
+function gatherState(){
+  const g=id=>document.getElementById(id);
+  const cb={};CBIDS.forEach(id=>cb[id]=g(id).checked);
+  return {
+    a:{n:g('atk-pokemon-input').value,nat:g('atk-nature').value,evs:{...SP.atk},ivs:[...IV.atk],ab:g('atk-ability').value,item:g('atk-item').value,hp:g('atk-hp-pct').value},
+    d:{n:g('def-pokemon-input').value,nat:g('def-nature').value,evs:{...SP.def},ivs:[...IV.def],ab:g('def-ability').value,item:g('def-item').value,hp:g('def-hp-pct').value},
+    mv:[g('atk-move-input').value,g('atk-move-input2').value,g('atk-move-input3').value,g('atk-move-input4').value],
+    rk:['atk-rk-a','atk-rk-b','atk-rk-c','atk-rk-d','def-rk-a','def-rk-b','def-rk-c','def-rk-d'].map(id=>g(id).value),
+    env:{w:g('weather').value,tr:g('terrain').value,fmt:g('fmt').value,cb}
+  };
+}
+function shareURL(){
+  const s=encodeURIComponent(btoa(unescape(encodeURIComponent(JSON.stringify(gatherState())))));
+  const url=location.origin+location.pathname+'#'+s;
+  if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(url).then(()=>alert('共有URLをコピーしました')).catch(()=>prompt('コピーしてください:',url));
+  else prompt('コピーしてください:',url);
+}
+function applyState(st){
+  const g=id=>document.getElementById(id);
+  ['atk','def'].forEach(side=>{
+    const s=side==='atk'?st.a:st.d;if(!s)return;
+    SP[side]={...s.evs};
+    IV[side]=s.ivs?[...s.ivs]:[31,31,31,31,31,31];
+    if(s.nat)g(side+'-nature').value=s.nat;
+    if(s.item)g(side+'-item').value=s.item;
+    g(side+'-hp-pct').value=s.hp||100;
+  });
+  const e=st.env||{};
+  g('weather').value=e.w||'none';g('terrain').value=e.tr||'none';g('fmt').value=e.fmt||'single';
+  if(e.cb)CBIDS.forEach(id=>{if(id in e.cb)g(id).checked=!!e.cb[id]});
+  if(st.rk)['atk-rk-a','atk-rk-b','atk-rk-c','atk-rk-d','def-rk-a','def-rk-b','def-rk-c','def-rk-d'].forEach((id,i)=>{if(st.rk[i]!==undefined)g(id).value=st.rk[i]});
+  acAtkPoke.setValue(st.a.n);acDefPoke.setValue(st.d.n);
+  setTimeout(()=>{
+    if(st.a.ab)g('atk-ability').value=st.a.ab;
+    if(st.d.ab)g('def-ability').value=st.d.ab;
+    if(st.mv){
+      g('atk-move-input2').value=st.mv[1]||'';
+      g('atk-move-input3').value=st.mv[2]||'';
+      g('atk-move-input4').value=st.mv[3]||'';
+      acMove.setValue(st.mv[0]||'');
+    }else calc();
+  },80);
+}
+function applyHash(){
+  if(!location.hash||location.hash.length<2)return;
+  try{
+    const st=JSON.parse(decodeURIComponent(escape(atob(decodeURIComponent(location.hash.slice(1))))));
+    applyState(st);
+  }catch(e){}
+}
+function resetAll(){
+  const g=id=>document.getElementById(id);
+  CBIDS.forEach(id=>g(id).checked=false);
+  ['atk-rk-a','atk-rk-b','atk-rk-c','atk-rk-d','def-rk-a','def-rk-b','def-rk-c','def-rk-d'].forEach(id=>g(id).value='0');
+  g('weather').value='none';g('terrain').value='none';g('fmt').value='single';
+  g('atk-hp-pct').value=100;g('def-hp-pct').value=100;
+  document.getElementById('surv-out').textContent='';
+  calc();
+}
+
 function swap(){
-  const a=document.getElementById('atk-pokemon-input').value;
-  const d=document.getElementById('def-pokemon-input').value;
-  const an=document.getElementById('atk-nature').value;
-  const dn=document.getElementById('def-nature').value;
+  const g=id=>document.getElementById(id);
+  const a=g('atk-pokemon-input').value;
+  const d=g('def-pokemon-input').value;
+  const an=g('atk-nature').value,dn=g('def-nature').value;
   const asp={...SP.atk},dsp={...SP.def};
-  const ai=document.getElementById('atk-item').value;
-  const di=document.getElementById('def-item').value;
-  SP.atk=dsp;SP.def=asp;
-  document.getElementById('atk-nature').value=dn;
-  document.getElementById('def-nature').value=an;
-  document.getElementById('atk-item').value=di;
-  document.getElementById('def-item').value=ai;
+  const aiv=[...IV.atk],div=[...IV.def];
+  const ai=g('atk-item').value,di=g('def-item').value;
+  const ah=g('atk-hp-pct').value,dh=g('def-hp-pct').value;
+  SP.atk=dsp;SP.def=asp;IV.atk=div;IV.def=aiv;
+  g('atk-nature').value=dn;g('def-nature').value=an;
+  g('atk-item').value=di;g('def-item').value=ai;
+  g('atk-hp-pct').value=dh;g('def-hp-pct').value=ah;
+  ['a','b','c','d'].forEach(k=>{const x=g('atk-rk-'+k),y=g('def-rk-'+k);const t=x.value;x.value=y.value;y.value=t});
+  [['tw-atk','tw-def'],['par-atk','par-def']].forEach(pr=>{const x=g(pr[0]),y=g(pr[1]);const t=x.checked;x.checked=y.checked;y.checked=t});
   acAtkPoke.setValue(d);acDefPoke.setValue(a);
   setTimeout(()=>{
-    const aa=document.getElementById('atk-ability'),da=document.getElementById('def-ability');
+    const aa=g('atk-ability'),da=g('def-ability');
     const aOpts=[...aa.options].map(o=>o.value),dOpts=[...da.options].map(o=>o.value);
     const av=da.value,dv=aa.value;
     if(aOpts.includes(av))aa.value=av;
@@ -983,26 +1232,43 @@ function swap(){
     calc();
   },60);
 }
- 
+
 // ===== PARTY =====
 function getParty(){try{return JSON.parse(localStorage.getItem('pokeParty'))||[]}catch(e){return[]}}
 function setParty(p){localStorage.setItem('pokeParty',JSON.stringify(p))}
-function partySave(){
+function partySave(side){
+  side=side||'atk';
   const party=getParty();
   if(party.length>=6){alert('パーティは6体までです。削除してから保存してください。');return}
-  const name=document.getElementById('atk-pokemon-input').value;
+  const name=document.getElementById(side+'-pokemon-input').value;
   if(!name){alert('ポケモンを選択してください');return}
-  const slot={name,nature:document.getElementById('atk-nature').value,evs:{...SP.atk},ability:document.getElementById('atk-ability').value,item:document.getElementById('atk-item').value,move:document.getElementById('atk-move-input').value};
+  const slot={name,nature:document.getElementById(side+'-nature').value,evs:{...SP[side]},ivs:[...IV[side]],ability:document.getElementById(side+'-ability').value,item:document.getElementById(side+'-item').value,
+    moves:side==='atk'?[document.getElementById('atk-move-input').value,document.getElementById('atk-move-input2').value,document.getElementById('atk-move-input3').value,document.getElementById('atk-move-input4').value].filter(Boolean):[]};
   party.push(slot);setParty(party);renderParty();
 }
 function partyDel(i){const p=getParty();p.splice(i,1);setParty(p);renderParty()}
 function partyLoad(i,side){
   const p=getParty()[i];if(!p)return;
   SP[side]={...p.evs};
+  if(p.ivs)IV[side]=[...p.ivs];
   document.getElementById(side+'-nature').value=p.nature;
   document.getElementById(side+'-item').value=p.item;
-  if(side==='atk'){acAtkPoke.setValue(p.name);setTimeout(()=>{document.getElementById('atk-ability').value=p.ability;acMove.setValue(p.move)},50)}
-  else{acDefPoke.setValue(p.name);setTimeout(()=>{document.getElementById('def-ability').value=p.ability},50)}
+  const moves=(p.moves&&p.moves.length)?p.moves:(p.move?[p.move]:[]);
+  if(side==='atk'){
+    acAtkPoke.setValue(p.name);
+    setTimeout(()=>{
+      document.getElementById('atk-ability').value=p.ability;
+      if(moves.length){
+        document.getElementById('atk-move-input2').value=moves[1]||'';
+        document.getElementById('atk-move-input3').value=moves[2]||'';
+        document.getElementById('atk-move-input4').value=moves[3]||'';
+        acMove.setValue(moves[0]||'');
+      }else calc();
+    },60);
+  }else{
+    acDefPoke.setValue(p.name);
+    setTimeout(()=>{document.getElementById('def-ability').value=p.ability;calc()},60);
+  }
 }
 function renderParty(){
   const party=getParty(),g=document.getElementById('party-grid');
@@ -1010,7 +1276,8 @@ function renderParty(){
   for(let i=0;i<6;i++){
     if(i<party.length){
       const s=party[i],evs=Object.entries(s.evs).filter(([,v])=>v>0).map(([k,v])=>{const n={hp:'H',atk:'A',def:'B',spa:'C',spd:'D',spe:'S'}[k]||k;return n+v}).join(' ');
-      h+=`<div class="party-slot" onclick="partyLoad(${i},'atk')" title="クリック→攻撃側\nShift+クリック→防御側" onmousedown="if(event.shiftKey){event.preventDefault();partyLoad(${i},'def')}"><span class="ps-del" onclick="event.stopPropagation();partyDel(${i})">&times;</span><div class="ps-name">${s.name}</div><div class="ps-info">${s.nature}<br>${evs||'無振り'}<br>${s.move||'-'}</div></div>`;
+      const mv1=(s.moves&&s.moves[0])||s.move||'-';
+      h+=`<div class="party-slot" onclick="partyLoad(${i},'atk')" title="クリック→攻撃側\nShift+クリック→防御側" onmousedown="if(event.shiftKey){event.preventDefault();partyLoad(${i},'def')}"><span class="ps-del" onclick="event.stopPropagation();partyDel(${i})">&times;</span><div class="ps-name">${s.name}</div><div class="ps-info">${s.nature}<br>${evs||'無振り'}<br>${mv1}</div></div>`;
     }else{
       h+=`<div class="party-slot empty">空</div>`;
     }
@@ -1020,7 +1287,8 @@ function renderParty(){
 function partyExport(){
   const p=getParty();if(!p.length){alert('パーティが空です');return}
   const s=btoa(unescape(encodeURIComponent(JSON.stringify(p))));
-  navigator.clipboard.writeText(s).then(()=>alert('クリップボードにコピーしました')).catch(()=>{prompt('以下をコピーしてください:',s)});
+  if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(s).then(()=>alert('クリップボードにコピーしました')).catch(()=>{prompt('以下をコピーしてください:',s)});
+  else prompt('以下をコピーしてください:',s);
 }
 function partyImport(){
   const s=prompt('エクスポートした文字列を貼り付けてください:');if(!s)return;
